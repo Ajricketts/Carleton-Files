@@ -1,0 +1,37 @@
+Comp 3000 Tutorial #9
+Alyxander-Jacob Ricketts
+101084146
+
+
+Understanding 3000rootkit:
+----------------------------
+
+Question 1:
+---------------
+ - In insert.sh, we are passing paramaters to the kernel module through
+	command line arguments (through a script).
+	
+ - In 3000rootkit we are retrieving paramaters by using the module_param
+	function.
+	
+Question 2:
+---------------
+
+ - The functions enable_write_protection and disable_write_protection
+	allow us to write to the system call table. This write protection
+	must be disabled before we can hook into the syscall table memory,
+	but must be re-enabled or else we will be stuck with a un-removable
+	module and the kernel will crash.
+	
+
+Question 3:
+---------------
+	
+ - The way to hook a system call roughly works by:
+ 
+	1. Declaring a function pointer to the original open() system call.
+	
+	2. Finding the 
+	
+	
+** Got stuck on the Tutorial and could not complete it after this point**

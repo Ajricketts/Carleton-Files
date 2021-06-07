@@ -1,0 +1,34 @@
+Comp 3000 Assignment #3
+Alyxander-Jacob Ricketts
+101084146
+
+
+Question 1
+-----------------
+
+ - Because inode numbers are allocated by the system, you can not just change the inode number yourself. The only way to have a file with the same name as before with a different inode number would be to copy the file using the mv command (must name it something different or copy it to a different location), then remove the original file using the rm command, and finally rename the copied file to the same name as the original file.
+
+	- The mv command will move either a file or directory to a new location, for example:
+    			
+		mv source_file destination
+
+	- If the mv command is given a source file and a new filename it will copy the source file in the same directory and create a new identical file with the new filename.
+
+	- The rm command will remove the given file from the directory. 
+
+
+Question 2
+
+
+ - 
+
+
+
+Question 3
+
+ - To set up a key-based login using ssh, you must create a public and private rsa key on the host system, and then create an authorized_keys file on the remote system in /ssh and copy the public key you created the host system to this file.
+
+Question 4
+
+ - 
+

@@ -1,0 +1,151 @@
+** PLEASE NOTE:  IF YOU FAIL TO FOLLOW THESE INSTRUCTIONS PRECISELY **
+    **               YOUR SUBMISSION WILL RECEIVE A FINAL MARK OF ZERO. **
+
+    ┌─[ OVERVIEW ]───────────────────────────────────────────────────────┐
+    │                                                                    │
+    │ For this assignment you will create a program that plays a one     │
+    │ person variant of the game 'Guess Who'. If you have never played   │
+    │ this game before then you must read about it at:                   │
+    │ https://en.wikipedia.org/wiki/Guess_Who%3F.                        │
+    │                                                                    │
+    │ The game you are creating is played between one human player and   │
+    │ your computer program. The human player will look at a collection  │
+    │ of 16 cartoon faces and select one - this will be that player's    │
+    │ identity. The computer program will then ask the player some yes   │
+    │ or no questions about the features of their chosen identity, and   │
+    │ the human player must answer truthfully. Eventually the computer   │
+    │ program should have enough information to identify which of the 16 │
+    │ faces was selected by the player and at that point the game is     │
+    │ over.                                                              │
+    │                                                                    │
+    │ Your submission will be structurally similar to the second of the  │
+    │ dichotomous key examples presented in class, so you must review    │
+    │ those examples before you begin.                                   │
+    │                                                                    │
+    │ Your first seven lines of your submission must be a completed      │
+    │ copy of the following header and it must be reproduced exactly.    │
+    │                                                                    │
+    │ Check cuLearn for a sample assignment header that you may copy.    │
+    │                                                                    │
+    │ # ============================================================     │
+    │ #                                                                  │
+    │ # Student Name (as it appears on cuLearn): ????? ?????             │
+    │ # Student ID (9 digits in angle brackets): <?????????>             │
+    │ # Course Code (for this current semester): COMP1405?               │
+    │ #                                                                  │
+    │ # ============================================================     │
+    │                                                                    │
+    │ Replace the questions marks in the sample with your name,          │
+    │ student ID, and the letter indicating the section of COMP1405      │
+    │ (i.e., A or B) in which you are enrolled. Please note that the     │
+    │ student number must be enclosed in the angle brackets. As a        │
+    │ clarifying example, if your name was Robert Collier, your          │
+    │ student ID was 123456789, and you were enrolled in section A,      │
+    │ then the first seven lines of your submission must be:             │
+    │                                                                    │
+    │ # ============================================================     │
+    │ #                                                                  │
+    │ # Student Name (as it appears on cuLearn): Robert Collier          │
+    │ # Student ID (9 digits in angle brackets): <123456789>             │
+    │ # Course Code (for this current semester): COMP1405A               │
+    │ #                                                                  │
+    │ # ============================================================     │
+    │                                                                    │
+    │ Your submission must also use a specific filename in order for it  │
+    │ to be located by the marking utility; your submission must have    │
+    │ filename 'comp1405_f17_#########_a4.py', with the number signs     │
+    │ replaced by your nine digit student number.                        │
+    │                                                                    │
+    └────────────────────────────────────────────────────────────────────┘
+
+    ┌─[ INSTRUCTIONS ]───────────────────────────────────────────────────┐
+    │                                                                    │
+    │  1. When you ran the generator it used your student number to      │
+    │ create a collection of faces and an image of the game board of     │
+    │ faces for playing the game. This image was saved in a file         │
+    │ called 'your-game-board.png'. Review this image carefully          │
+    │ because the branching control structures you develop for this      │
+    │ submission will reference the features in the faces of this        │
+    │ image, but please note that you are not including this file with   │
+    │ your submission.                                                   │
+    │                                                                    │
+    │  2. Download the assignment template from cuLearn, place it in     │
+    │ the same folder as 'your-game-board.png' and                       │
+    │ 'comp1405_f17_assistant_a4.py' (a file you extracted when you      │
+    │ extracted the generator). You must rename the assignment           │
+    │ template to 'comp1405_f17_#########_a4.py', replacing the          │
+    │ hashtags with your nine-digit student number. This file is the     │
+    │ only file you will submit.                                         │
+    │                                                                    │
+    │  3. The template for this assignment contains only a header and    │
+    │ one line of code. The 'from comp1405_f17_assistant_a4 import *'    │
+    │ instruction will give you access to two functions provided in      │
+    │ the 'comp1405_f17_assistant_a4.py' module. See the next item for   │
+    │ more details.                                                      │
+    │                                                                    │
+    │  4. You cannot use the print function or the input function when   │
+    │ completing this assignment. Instead, in order for your program     │
+    │ to interact with the player, you must use the ask_question and     │
+    │ make_a_guess functions that were imported from the                 │
+    │ 'comp1405_f17_assistant_a4.py' module. The ask_question function   │
+    │ takes a single string argument and returns a string; the           │
+    │ argument is the question that the computer wishes to ask and the   │
+    │ return value string is the response entered by the player. The     │
+    │ make_a_guess function takes a single string argument and has no    │
+    │ return value; the argument is what the computer has concluded      │
+    │ about the identity of the player. Review these functions           │
+    │ carefully but do not modify them in any way. Pay careful           │
+    │ attention to the possible values that could be returned by the     │
+    │ ask_question function.                                             │
+    │                                                                    │
+    │  5. Please note that for this variant the computer program is      │
+    │ only allowed to guess at the identity of the player once. In       │
+    │ other words, the computer program must be 100% certain about the   │
+    │ identity of the player before calling the make_a_guess function.   │
+    │ The computer program must also be able to identify the human       │
+    │ player in less than five guesses - if you review the features of   │
+    │ your assigned faces carefully, you should have no difficulty       │
+    │ coming up with the collection of questions the computer should     │
+    │ ask. In many ways, the submission you are preparing for this       │
+    │ assignment is very similar to the dichotomous key example that     │
+    │ was discussed in class.                                            │
+    │                                                                    │
+    │  6. In order for your submission to receive a mark, each of the    │
+    │ string arguments you provide to the ask_question function must     │
+    │ contain one and only one of the following words: ['earring',       │
+    │ 'eyepatch', 'glasses', 'hair', 'hat', 'moustache', 'pipe',         │
+    │ 'tattoo', 'tie']. The case does not matter, but exactly one of     │
+    │ these words must appear in your question, as these are the only    │
+    │ features that can be used to uniquely identify one of the          │
+    │ cartoon faces. As a clarifying example, the string 'Are you        │
+    │ wearing a hat?' would be a valid question, but the string 'Does    │
+    │ your name start with the letter A?' would be an invalid            │
+    │ question. If your submission uses any invalid questions you will   │
+    │ receive a mark of zero.                                            │
+    │                                                                    │
+    │  7. Similarly, each of the string arguments you provide to the     │
+    │ make_a_guess function must contain one and only one of the names   │
+    │ that appears on your game board. Once again, although the case     │
+    │ does not matter, if any of your calls to the make_a_guess          │
+    │ function are passed an argument that does not contain one (and     │
+    │ only one) of the names that you have been assigned, your           │
+    │ submission will receive a mark of zero.                            │     
+    │                                                                    │
+    │  8. Do not use the input or print functions in your submission.    │
+    │ The only functions you are permitted in this assignment are        │
+    │ upper, lower, ask_question, and make_a_guess. If your submission   │
+    │ calls any other function you will receive a mark of zero.          │
+    │                                                                    │
+    │  9. The only module you are allowed to import is already           │
+    │ imported for you (i.e., 'comp1405_f17_assistant_a4.py'). Do not    │
+    │ make any additional imports - if you do, then you will receive a   │
+    │ mark of zero.                                                      │
+    │                                                                    │
+    │ 10. Close the pygame window to terminate this generator.           │
+    │                                                                    │
+    └────────────────────────────────────────────────────────────────────┘
+
+
+    ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^
+    SCROLL UP TO THE OVERVIEW SECTION AND ENSURE YOU READ ALL INSTRUCTIONS
+    ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^

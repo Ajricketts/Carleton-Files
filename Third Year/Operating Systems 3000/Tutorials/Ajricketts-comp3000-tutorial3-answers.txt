@@ -1,0 +1,293 @@
+Comp 3000 Tutorial #3
+Alyxander-Jacob Ricketts
+101084146
+Friday October 11th, 2019
+
+FUNCTION CALLS, LIBRARY CALLS, AND SYSTEM CALLS
+
+Question 1: Compile the program prog.c using gcc -O2 prog.c -o prog-dyn and run prog-dyn. What does it do?
+
+	Both programs print out Hello world:
+
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ gcc -O2 hello.c -o hello-dyn
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ ./hello-dyn 
+
+	Hello world!
+
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ gcc -O2 syscall-hello.c -o syscall-
+	hello-dyn
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ ./syscall-hello-dyn 
+	
+	Hello world!
+
+
+
+Question 2: Statically compile and optimize prog.c by running gcc -O2 -static prog.c -o prog-static. How does the size compare with prog?
+
+	The sizes of the statically compiled programs are much larger than the dynamically
+	compiled ones:
+
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ ls -la
+	total 1700
+	drwxrwxr-x 2 student student   4096 Oct 10 23:30 .
+	drwxrwxr-x 3 student student   4096 Oct 10 23:19 ..
+	-rw-rw-r-- 1 student student     85 Oct 10 23:18 Ajricketts-comp3000-tutorial3-
+	answers.txt
+	-rw-rw-r-- 1 student student    111 Oct 10 23:19 hello.c
+	-rwxr-xr-x 1 student student   8304 Oct 10 23:26 hello-dyn
+	-rwxr-xr-x 1 student student 844704 Oct 10 23:29 hello-static
+	-rw-rw-r-- 1 student student    277 Oct 10 23:19 syscall-hello.c
+	-rwxr-xr-x 1 student student   8344 Oct 10 23:26 syscall-hello-dyn
+	-rwxr-xr-x 1 student student 844712 Oct 10 23:30 syscall-hello-static
+
+
+
+Question 3: See what system calls prog-static produces by running strace -o syscalls-static.log ./prog-static. Do the same for prog-dyn. Which version generates more system calls? Note: system calls are saved in the log file syscalls-static.log. Feel free to save them in a different file.
+
+	The system calls for the dynamically compiled versions are much greater than the 		statically compiled versions. For example see the difference between the statically 		and dynamically compiled versions of syscall-hello:
+
+	
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ cat syscalls2-static.log 
+	
+	execve("./syscall-hello-static", ["./syscall-hello-static"], 0x7fffb31ecd70 /* 47 		vars */) = 0
+	brk(NULL)                               = 0x1e85000
+	brk(0x1e861c0)                          = 0x1e861c0
+	arch_prctl(ARCH_SET_FS, 0x1e85880)      = 0
+	uname({sysname="Linux", nodename="COMPXXXX", ...}) = 0
+	readlink("/proc/self/exe", "/home/student/Desktop/Comp 3000/"..., 4096) = 62
+	brk(0x1ea71c0)                          = 0x1ea71c0
+	brk(0x1ea8000)                          = 0x1ea8000
+	access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+	write(1, "Hello world!\n", 13)          = 13
+	exit_group(13)                          = ?
+	+++ exited with 13 +++
+
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ strace -o syscalls-dyn.log ./	
+	syscall-hello-dyn
+	Hello world!
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ cat syscalls-dyn.log 
+
+	execve("./syscall-hello-dyn", ["./syscall-hello-dyn"], 0x7ffe74cd6b30 /* 47 vars 
+	*/) = 0
+	brk(NULL)                               = 0x5633078a8000
+	access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+	access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+	openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+	fstat(3, {st_mode=S_IFREG|0644, st_size=54525, ...}) = 0
+	mmap(NULL, 54525, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fe71aba0000
+	close(3)                                = 0
+	access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+	openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+	read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\260\34\2\0\0\0\0\0"..., 	832) = 832
+	fstat(3, {st_mode=S_IFREG|0755, st_size=2030544, ...}) = 0
+	mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 
+	0x7fe71ab9e000
+	mmap(NULL, 4131552, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 
+	0x7fe71a590000
+	mprotect(0x7fe71a777000, 2097152, PROT_NONE) = 0
+	mmap(0x7fe71a977000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|
+	MAP_DENYWRITE, 3, 0x1e7000) = 0x7fe71a977000
+	mmap(0x7fe71a97d000, 15072, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|	
+	MAP_ANONYMOUS, -1, 0) = 0x7fe71a97d000
+	close(3)                                = 0
+	arch_prctl(ARCH_SET_FS, 0x7fe71ab9f4c0) = 0
+	mprotect(0x7fe71a977000, 16384, PROT_READ) = 0
+	mprotect(0x56330757f000, 4096, PROT_READ) = 0
+	mprotect(0x7fe71abaf000, 4096, PROT_READ) = 0
+	munmap(0x7fe71aba0000, 54525)           = 0
+	write(1, "Hello world!\n", 13)          = 13
+	exit_group(13)                          = ?
+	+++ exited with 13 +++
+
+
+Question 4: See what library calls prog-static produces by running ltrace -o library-static.log ./prog-static. Do the same for prog-dyn. Which version generates more library calls? (If ltrace isn't installed, run sudo apt-get install ltrace)
+
+	Given that ltrace only works for dynamically allocated files. The dynamic version 		generates more library calls
+
+
+Question 5: Use the command ls -l to see the metadata associated with prog.c and prog-dyn, and prog-static. Who owns these files? What group are they in? Do you notice any pattern with the permissions (rwx) associated with each file?
+
+
+
+	When looking at the metadat, you can see that the owner of the hello and syscall-
+	hello and all their versions is student and they are in the student group. The 	
+	permisions for the executables are all the same, for example:
+
+	-rwxr-xr-x 1 student student   8344 Oct 10 23:26 syscall-hello-dyn
+	-rwxr-xr-x 1 student student 844712 Oct 10 23:30 syscall-hello-static
+
+	and the permisions for the .c files are all the same, for example:
+
+	-rw-rw-r-- 1 student student    277 Oct 10 23:19 syscall-hello.c
+
+	For the executables, we can see that only the owner can write to these files as 
+	well as read and execute, but someone in the same group, and everyone else can only 		read and execute these files. For the .c files, we can see that the owner, as well 		as someone in the same group can read and write to these files and then everyone 		else may only read these files.
+
+
+
+
+COMPARING C AND ASSEMBLY
+
+Question 1: Using the nm command, see what symbols are defined in prog-static and prog-dyn. Which defines more symbols?
+
+
+	The static version defines many more symbols than the dynamic version.
+
+
+Question 2: Run the command gcc -c -O2 prog.c to produce an object file. What file was produced? What symbols does it define?
+
+	An object file was produced (syscall-hello.o). It defined the following symbols:
+
+	
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ nm syscall-hello.o
+	0000000000000000 D buf
+                 	 U _GLOBAL_OFFSET_TABLE_
+	0000000000000000 T main
+                 	 U syscall
+
+
+Question 3: Look at the assembly code of the program by running gcc -S -O2 prog.c. What file was produced? Identify the following in the assembly code (if present):
+
+    A function call (call)
+    A return from a function (ret)
+    Registers being saved onto the stack (push)
+    Registers being retrieved from the stack (pop)
+    Subtraction (sub)
+    A system call (syscall)
+
+	For syscall-hello.c
+	
+	Function call on line 17: call    syscall@PLT
+	Return from a function on line 20: ret
+	A system call on line 17: call    syscall@PLT
+
+	For hello.c
+
+	Function call on line 16: call    puts@PLT
+	Return from a function call on line 20: ret
+	Subtraction: subq    $8, %rsp
+
+
+Question 4: Disassemble the object file using objdump -d. How does this disassembly compare with the output from gcc -S?
+
+	The disassembly only displays sections that are expected to contain instructions
+	(from the man pages) (this mostly includes the main section of the program). The 
+	output is also less formatted (colours etc).
+
+
+Question 5: Examine the headers of object file, dynamically linked executable, and the statically linked executable using objdump -h
+
+	
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials$ objdump -h syscall-hello.o
+
+	syscall-hello.o:     file format elf64-x86-64
+
+	Sections:
+	Idx Name          Size      VMA               LMA               File off  Algn
+ 	0 .text         00000000  0000000000000000  0000000000000000  00000040  2**0
+                  	 CONTENTS, ALLOC, LOAD, READONLY, CODE
+  	1 .data         00000000  0000000000000000  0000000000000000  00000040  2**0
+                  	CONTENTS, ALLOC, LOAD, DATA
+    	2 .bss          00000000  0000000000000000  0000000000000000  00000040  2**0
+                  	ALLOC
+  	3 .text.startup 00000026  0000000000000000  0000000000000000  00000040  2**4
+                  	CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  	4 .rodata.str1.1 0000000e  0000000000000000  0000000000000000  00000066  2**0
+                  	CONTENTS, ALLOC, LOAD, READONLY, DATA
+  	5 .data.rel.local 00000008  0000000000000000  0000000000000000  00000078  2**3
+                  	CONTENTS, ALLOC, LOAD, RELOC, DATA
+ 	6 .comment      0000002c  0000000000000000  0000000000000000  00000080  2**0
+                  	CONTENTS, READONLY
+  	7 .note.GNU-stack 00000000  0000000000000000  0000000000000000  000000ac  2**0
+                  	CONTENTS, READONLY
+  	8 .eh_frame     00000030  0000000000000000  0000000000000000  000000b0  2**3
+                  	CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+
+
+Question 6: Examine the contents of object file, dynamically linked executable, and the statically linked executable using objdump -s
+
+	A lot of output written to the terminal, used commands objdump -s syscall-hello.o, 
+	objdump -s syscall-hello-static and objdump -s syscall-hello-dyn
+
+
+
+Question 7: Re-run all of the previous gcc commands adding the "-v" flag. What is all of that output?
+
+	All of the output printed is all of the commands executed to compile the file.
+
+
+
+EXAMINING THE RUNTIME MEMORY MAP
+
+Question 1: Why are the addresses inconsistent between runs?
+
+	The addresses are inconsistent between runs because the OS is switching the memory 		location. This is done for security reasons (Code injection attacks).
+
+
+Question 2: Roughly where does the stack seem to be? The heap? Code? Global variables?
+
+	The stack seems to be where the argument and enviroment variables are, for example:
+
+	argv:      7ffc679c0a98
+	argv[0]:   7ffc679c2429
+	envp:      7ffc679c0aa8
+
+	The heap seems to be where buf is, this can be inferred as that is where a malloc 
+	call is, for example:
+
+	 buf[0]:    55c5f0db8670
+
+	The code would be around where the main memory value is, for example:
+
+	main:      55c5efa6a7ba
+
+	Global variables would seem to start around: gmsg:      55c5efa6ab20, as there are 		few global variables in this program we can assume it starts in and around this area
+
+
+Question 3: Observe how the heap grows (i.e. the value of sbrk changes) in response to malloc calls. Would you expect the heap to ever run into the stack? Why or why not?
+
+
+	I would not expect the heap to ever run into the stack as even changing the malloc 		call to buf[i] = (char *) malloc(4096 * 4096) did not move the heap close enough to 		the stack where it would make me believe the heap would run into the stack.
+
+
+Question 4: Change each malloc call to allocate more than 128K. What happens to the values of sbrk? Why? (Hint: use strace)
+
+	The values of sbrk do not change, this is because after increasing to a certain 	point it turns into virtual memory and the OS does not physically allocate this 	memory to sbrk as it is not yet needed.
+
+Question 5:
+
+	An example of something I added is another local variable after the memory address 
+	of the global variable is printed (line 24) and printed it out to see where it was:
+
+	char *lmsg2 = "Local Message 2";
+
+        printf("lmsg2:     %lx\n", (unsigned long) lmsg2);
+        printf("&lmsg2:     %lx\n", (unsigned long) &lmsg2);
+
+	(This is at line 26 - 29)
+
+	This local variable is generally in the same region as the previous one, therefore  
+	in this case things are where I expected them to be.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

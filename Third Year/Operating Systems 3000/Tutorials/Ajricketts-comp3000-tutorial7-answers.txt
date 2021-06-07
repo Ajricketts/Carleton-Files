@@ -1,0 +1,154 @@
+COMP 3000 Tutorial 7
+Alyxander-Jacob Ricketts
+101084146
+
+Commands to try
+----------------
+
+ - The first command creates an infinately large file of random bytes
+ 
+ - The second command is not permitted as I am a non-privileged user
+ 
+ - The third command creates a special file filled with random bytes
+	and has a size of 1, 9
+ 
+ - The fourth command is not permitted as I am a non-privileged user
+ 
+ - The fifth command also creates a special file filled with random bytes
+	that has a size of 1, 9
+ 
+
+
+ - The commands all create special files filled with random bytes (the
+	commands you have permission to run), though the third and fifth 
+	command create files that are copies of the actual urandom special file.
+	The difference between this and the first command is the first command
+	will continously try and copy all the bytes to the new file you specified,
+	while the third and fifth command create copies of the actual special file.
+	
+	
+
+
+TASKS
+	
+Question 1:
+----------------
+
+ - I created a named pipe called pipe using the command mkfifo and then used it
+	by running the command ls > pipe in one terminal, and wc < pipe in another.
+	This can also be done using the mknod command by giving it the type p. (mknod pipe p)
+	
+
+Question 2:
+----------------
+
+ - You need to be root in order to create the block device representing my machines
+	root filesystem, but do not need to be root in order to run dumpe2fs.
+	
+ - I created the block device myroot by running df to find where the filesystem was
+	(/dev/mapper/COMPbase--vg-root, which was a symbolic link to /dev/dm-0). I then
+	used ls -la in /dev to find the major and minor number of dm-0. Finally I used
+	these numbers to create the block device myroot by running the command 
+	sudo mknod myroot b 253 0.
+	
+Question 3:
+----------------
+	
+ - You can figure out what your current tty is by running the command who.
+	Both the tty I made as well as the original tty have the same characteristics
+	
+
+Question 4:
+----------------
+
+ - The shell does not print out what the user is typing when local echo is disabled.
+	You can restore echo without logging out and back in by running stty echo.
+
+
+
+
+A SIMPLE KERNEL MODULE
+
+
+Question 2:
+----------------	
+
+ - You can view the kernel logs by going into /var/log and looking at the syslog file.
+ 
+ 
+Question 3:
+----------------
+
+ - You can check to see if the module has been loaded by the command lsmod | grep {module name}
+ 
+
+Question 4:
+----------------
+
+ - You can delete the module by using the command rmmod {module name}
+
+
+
+
+
+
+
+A CHARACTER DEVICE KERNEL MODULE
+
+Question 2:
+---------------- 
+	
+ - Yes, it creates the kernel message: "comp3000: Ones device registered using major 243."
+	
+	
+Question 3:
+----------------
+
+ - When you "cat" the device /dev/ones it continously prints out ones to the terminal.
+	You can limit the output by piping it to less: cat ones | less
+	
+
+Question 4:
+----------------
+
+ - You can modify your module to crash the kernel if you remove the cleanup that is done
+	when the module exits
+
+
+
+
+
+
+
+LISTING PROCESSES FROM A MODULE
+
+Question 2:
+----------------
+
+ - Current is a struct, more specifically it is a task struct that has all the information on
+	the current process. I found this out by first looking at the function that uses current
+	on the linux cross reference pages. From there I looked at the parameters of the function
+	and the paramater type.
+	
+Question 3:
+----------------
+
+ - You can change newgetpid.c so that it creates a device file /dev/describe by changing the
+	variable DEVICE_NAME to "describe" instead of "newgetpid"
+	
+Question 4:
+----------------
+
+ - 
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,70 @@
+#| Alyxander-Jacob Ricketts
+   101084146
+
+|#
+
+
+(display "Question 1a: ")
+
+#|
+(x/y2+2y)/3
+|#
+
+(define (cbrt x)
+
+        (define (square y) (* y y))
+  
+        (define (cube y)(* y y y))
+
+	(define (good-enough? guess)
+		(< (abs (- (cube guess) x)) 0.001))
+
+	(define (average x y)
+		(/ (+ y (* 2 x)) 3))
+	
+	(define (improve guess)
+		(average guess (/ x (square guess))))
+
+	(define (cbrt-iteration guess)
+		(if (good-enough? guess)
+			guess
+			(cbrt-iteration (improve guess))))
+	
+	(cbrt-iteration 1.0))
+
+
+
+(cbrt 9)
+
+
+(display "1b: ")
+
+(define (cbrt x)
+
+        (define (new-if predicate consequent alternate)
+	   (cond (predicate consequent)
+			 (else alternate)))
+   
+        (define (square y) (* y y))
+  
+        (define (cube y)(* y y y))
+
+	(define (good-enough? guess)
+		(< (abs (- (cube guess) x)) 0.001))
+
+	(define (average x y)
+		(/ (+ y (* 2 x)) 3))
+	
+	(define (improve guess)
+		(average guess (/ x (square guess))))
+
+	(define (cbrt-iteration guess)
+		(new-if ((good-enough? guess)
+			(guess))
+			cbrt-iteration (improve guess)))
+	
+	(cbrt-iteration 1.0))
+
+(cbrt 9)
+(display "No, the new version does not work, as it now returns an error when it is run.
+          The new version expects a procedure in the if statement.")

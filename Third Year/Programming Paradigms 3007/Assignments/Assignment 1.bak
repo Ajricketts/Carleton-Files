@@ -1,0 +1,71 @@
+#| Alyxander-Jacob Ricketts
+   101084146
+
+   Question 1:
+|#
+
+
+;a
+(display "a: ")
+(+ -1 2 3 -4 -5 -6)
+
+;b
+(display "b: ")
+(+ (- 19 9)(* (+ (/ 12 3) 4) (+ (/ 21 7) 7)))
+
+;c
+(display "c: ")
+(/ (+ (* (/ 63 9) (- (/ 12 4) (/ 74 (+ 72 2)))) 12) 3)
+
+;d
+(display "d: ")
+(+ (* 200 (* 5 2)) (- (/ 301 2.0) 1.6) (- (+ 2 20) 151))
+
+
+#|
+
+   Question 2:
+
+|#
+;a
+(define (cube x) (* x x x))
+
+#|
+   Test Cases
+
+  (cube 5)
+  (cube 9)
+|#
+
+;b
+(define (f x) (+ (* 3 (cube x)) 5))
+
+#|
+   Test Cases
+
+  (f 7)
+  (f 3)
+|#
+
+;c
+(define (g x) (+ (* 4 (f x)) (* 2 x)))
+
+#|
+   Test Cases
+
+  (g 12)
+  (g 9)
+|#
+
+;d
+(define (h x) (+ (f (- x 1)) (g (/ x 2))))
+
+#|
+   Test Cases
+
+  (h 5)
+  (h 10)
+|#
+
+;e
+

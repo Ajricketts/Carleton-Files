@@ -1,0 +1,117 @@
+COMP 1601 2021W Final Exam
+Name: Alyxander-Jacob Ricketts
+Student ID: 101084146
+
+Please add your answer after the points in square brackets.  Don't delete anything and make sure the question numbers remain at the start of the line, thanks!
+
+1. [2] When an android activity is "destroyed" the state variables in the class are not saved. I know this because this is a problem we ran into in assignment 3 where when rotated (the activity gets destroyed and restarted) none of the inputs or conversions were saved. To save the state, onSaveInstanceState was used and onCreate() was used to restore state.
+
+2. [2] An example in kotlin of converting a nullable type to a non-nullable type safely can be found in Tutorial 6 in Converter2A. On lines 6-17:
+
+			var convFrom = "From Type"
+		    var convTo = "To Type"
+		    var convert: (from: Double) -> Double?
+
+		    fun formatConversion(from: Double): String {
+		        val to = this.convert(from)
+		        if (to != null) {
+		            return "${from} ${this.convFrom} is ${to} ${this.convTo}."
+		        } else {
+		            return "Converting ${from} ${convFrom} to ${this.convTo} failed."
+		        }
+		    }
+
+	   We declared a closure that returned a Double?, this nullable type was then stored in the "to" variable on line 11 after being converted and was then type checked in the conditional below it (if (to != null) part). This safely converted the nullable type as we ensured our code could handle both a double as intended, but also a null value.
+
+3. [2] An example in Swift of converting an optional type to a regular type safely can be found in the Swift version of Converter2 in the same spot. In the declaration of the Converter struct, on lines 4-14:
+
+			var convFrom = "From Type"
+		    var convTo = "To Type"
+		    var convert: (_ from: Double) -> Double?
+		    
+		    func formatConversion(_ from: Double) -> String {
+		        if let to = self.convert(from) {
+		            return "\(from) \(self.convFrom) is \(to) \(self.convTo)."
+		        } else {
+		            return "Converting \(from) \(convFrom) to \(self.convTo) failed."
+		        }
+		    }
+
+	   Here we also declared a closure that returned a Double? which was then converted, type checked and stored in the "to" variable on line 9. If the variable was not null we ran the code in the if statement, if it was null the code in the else clause would have ran. This is a safe way to convert an optional type as we are not force unwrapping (using !) and assuming this value will always be valid. Using the if let syntax we can handle both the intended type and null.  
+
+4. [2] The friend is talking about the force unwrap on line 43 in ContentView.swift:
+
+		 let conv = conversions[mode]!
+
+	   This is a potential problem as it is telling the compiler that there will always be a valid converter object returned from this dictionary. Implementing a "Cars to Cows" conversion option with no corresponding Converter object would result in a compile time error. To implement this we would have to check if the converter dictionary returned a valid Converter object and handle it if it did not, this would result in making sure any other calls to the converter dictionary in the code also had this check.
+
+5. [2] Under the hood android is pausing, destroying, and then recreating the activity every time the device is rotated. This is what causes the loss of state in some circumstances. To preserve the state in these situations we can override the onSaveInstanceState() function and implement it so it saves our state variables when the activity is destroyed in a bundle and then restore the state in the onCreate() function.
+
+6a. [2] If you wanted to add a new activity to the android app you would have to modify the AndroidManifest.xml file and add a kotlin file for the code (in the case of IntendDemo from Tutorial 9 that was SplashScreen.kt) and an XML file for the layout of the screen (this was splashscreen.xml from Tutorial 9). Android knows how to use these files due to it being specified in AndroidManifest.xml, you will add a new activity with an intent filter in order to use your new kotlin file, and set the content view in your new kotlin file to specify what layout you wish to use (setContentView()).
+
+6b. [2] You would use an explicit intent as you know which activity you wish to run. The arguments you would give to it would be "this" (as in the class you are currently in) and the name of your new activity (class). In the case of IntentDemo and Splashscreen this was done on line 18 in SplashScreen.kt:
+
+		intent = Intent(this, MainActivity::class.java)
+
+7. [2] This can be done in the following way:
+
+		var m = 0
+		if (ks.toDoubleOrNull() != null) {
+			m = converter["km to mi"].convert(ks.toDouble())
+		} else {
+			m = 100
+		}
+
+8a. [2] The function onTapped() is called every time the button is pressed. I know this because the button was given the action onTapped which runs the function onTapped() every time it is pressed.
+
+8b. [2] The on-screen count is updated every time the count variable gets updated (every time the user clicks the button). We know this because count is a State variable which updates the screen every time it gets updated.
+
+9a. [2] The function myButtonPressed is called every time the user clicks the button on the screen. I know this because the onClick handler in activity_main.xml (which is the layout for MainActivity.kt) is set to the myButtonPressed function (line 16):
+
+		android:onClick="myButtonPressed"
+
+9b. [2] The on-screen count is updated every time the button is pressed, this is because the count variable gets incremented every time the user clicks the button (in myButtonPressed) and the message that is displayed to the screen (also defined in activity_main.xml and initialized as myMessage) also gets updated in myButtonPressed (myButtonPressed.text = .....)
+
+10a. [2] The input EditText will allow is numbers, I know this because of the line "android:inputType="number"" that designates that this EditText widget should only take numbers.
+
+10b. [2] How wide the entry field will be is specified by android:layout_width="wrap_content" (3rd line in layout declaration). There are no units of this width as this specifies that the widget should expand the width of the entry field to be only as wide as the content it is displaying.
+
+10c. [2] This widget will be placed at the bottom of the parent view. I know this because it is constrained to have its bottom constrained to the bottom of the parent. This can be seen by the app:layout_constraintBottom_toBottomOf="parent" line. 
+
+11a. [1] convert is a closure.
+
+11b. [2] Yes convert can be given a value of null. This is because it returns a nullable type (Double?)
+
+11c. [1] formatConversion() will return the failed message when the conversion from "from" failed and is a null value. More specifically, when the "to" variable is null.
+
+11d. [1] function or closure
+
+11e. [1] We can see an example of calling constructor() normally in the values of the elements of the conversions map. Specifically, we can look at lines the values of lines 32-41:
+
+		val conversions = mapOf(
+		        "F to C" to Converter("Farenheit", "Celsius",
+		            {F ->  ((F - 32.0)*(5.0/9.0))}),
+		        "C to F" to Converter("Celsius","Farenheit",
+		            {((9.0/5.0)*it + 32.0)}),
+		        "km to mi" to Converter("kilometers", "miles",
+		            fun (k: Double): Double? {
+		                val m = k * 0.6213712
+		                return m
+		            }),
+		        "inch to cm" to Converter("inches", "centimeters", ::InToCM))
+
+
+	   Converter("Farenheit", "Celsius", {F ->  ((F - 32.0)*(5.0/9.0))}) is a normal call to constructor()
+
+12a. [2] theImage is declared in the ContentView struct on line 11 as a state variable, and then again on line 43 in the ActiveImage struct as a binding. It is used in the ActiveImage struct when creating the GeometryReader.
+
+12b. [1] The value of theImage is used to store the names of the images to displays, these names are the names of the images stored in assets.
+
+12c. [3] The equivalent to theImage in PicViewer2A is the pic variable (declared on line 17). The pic variable is different from theImage as pic stores the actual image object while theImage simply stores a string of the name of the asset. The image is also a state variable so every time this string gets updated with a new valid name, the image gets updated on the screen. This is not the case with pic as we need to call updateImage() to set the image resource in order for the neww picture to be updated to the screen. 
+
+13a. [1] The possible values of moved are True and False as it is a bool.
+
+13b. [2] If we replaced the code with .position(position) the app would work the same the only difference being the image would start in the top left corner of the screen (as thats where 0,0 is) instead of the center like it does now.
+
+13c. [3] The equivalent to this code is setting the X and Y values to be TextWatcher's (PicWatcher) on lines 36 and 37 and updating the image's X and Y positions to their value. This code is run every time a user types something in the X and Y EditText fields due to the TextWatcher listening for text to be entered or changed on the Textfeilds. This differs from the way the swift code is run as moved and position are state variables so any time these values are updated this code is run. That could be whether the user drags the photo around or if they use the Textfields available and type in new positions. This is somewhat similar to what is happening in android although much simpler. In the Android version the TextWatchers are listening on EditText Fields and then updating their value accordingly, and then finally updating the image. This code is also run every time the user types things into the respective fields but this doesn't allow for the drag functionality in this implementation. 
+

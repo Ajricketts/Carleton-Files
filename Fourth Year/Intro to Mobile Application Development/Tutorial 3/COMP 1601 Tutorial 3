@@ -1,0 +1,36 @@
+COMP 1601 Tutorial 3
+AJ Ricketts
+101084146
+Monday February 1st, 2021
+
+1: The initial coordinates of the box can be found in the variable boxLocation, the coordinates are (200,400). The coordinates of the circle is found in the state variable location, the coordinates are (185,100). These coordinates are relative to the center point of both the circle and the box.
+
+2: You can change the drag gesture to onEnded by changing the event handler on line 35 in ContentView from onChanged to onEnded. This would look like:
+
+	.onEnded { value in
+	    self.location = value.location})
+	}
+}
+
+3: The circle has to be within 20 units of the center of the box. This can be seen in the conditional on line 44:
+
+if (abs(location.x - boxLocation.x) < 20) &&
+            (abs(location.y - boxLocation.y) < 20) {
+            Text("Success!").bold()
+        } else {
+            Text("Drag the circle into the box").bold()
+        }
+
+
+4: The view state is being stored in the location variable on line 10. It is being used in the Moveable circle instance in the event handler (used every time the circle is moved) as well as in the success message to check if the location of the cirle meets the requirements to print the success message.
+
+
+5: To make the lines of the rectangle thinner you would change the line width on line 16 to something less than 10. In my case I changed it to 5 so that would look like:
+
+	.stroke(Color.green, lineWidth: 5 )
+
+
+6: 
+
+
+7: Yes, we see a regular closure in the onChanged event handler, this is being used to track and update the Moveable circles position on the screen

@@ -1,0 +1,9 @@
+https://stackoverflow.com/questions/17271324/split-string-by-space-and-new-line-in-javascript
+
+https://stackoverflow.com/questions/22552765/get-word-character-screen-position-by-its-string-index-in-kinetic-js-text-element
+
+https://stackoverflow.com/questions/17572873/how-can-i-check-if-a-string-is-all-uppercase-in-javascript
+
+https://stackoverflow.com/questions/6156501/read-a-file-one-line-at-a-time-in-node-js/32599033
+
+https://stackoverflow.com/questions/14867835/get-substring-between-two-characters-using-javascript

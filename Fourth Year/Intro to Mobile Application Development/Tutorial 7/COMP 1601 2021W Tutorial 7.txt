@@ -1,0 +1,62 @@
+COMP 1601 2021W Tutorial 7
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1: The functional differences between the apps (other than the logged messages) are aparent when rotating the screen, the Mar10 app does not save its state (the number of times the button was pressed), and the tapDemo App does.
+
+
+2a: The activity is created, started, and the resumed
+
+2b: The activity is paused, stopped, and then the state is saved
+
+2c: The activity is stopped, the state saved, and then restarted again. Specifically, the activity is paused, stopped, saved, destroyed, created, started, and then finally resumed
+
+2d: If the app is first closed and then a new app is started or the app switcher is invoked the activity is paused, stopped, and then the state saved
+
+2e: The activity is restarted, started, and then resumed
+
+
+3: The code in the overrided onSaveInstnaceState is responsible for saving the apps state:
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.run {
+            putInt("count", count)
+        }
+        super.onSaveInstanceState(outState)
+
+        Log.d("TapDemo", "State saved")
+    }
+
+- this code is called when the app is closed, when the app switcher is invoked or when a rotation event occurs. In other words every time the activity has to be stopped.
+
+4: The if statement on line 22 is responsible for restoring the apps state:
+
+	if (savedInstanceState != null) {
+        with(savedInstanceState) {
+	        count = getInt("count")
+    	}
+	}
+
+- This code is called in the onCreate function, or any time the activity has to be created again (does not include when the app is paused and restarted again)
+
+5: Data is organized as a key-value pairing in a bundle. A bundle is much like a map though can store many more data types than a map or dictionary
+
+6: The data is saved to the bundle using the put[data type goes here]() functions, for example putInt()
+
+7: The bundle data is loaded by using the get[data type goes here]() functions, for example getInt()
+
+8: The bundle is persistant to the point the activigty is destroyed. This includes when the app is closed from the appswitcher or when the phone is turned off or restarted.
+
+9: To fix the message during rotation i simply created a function that checked if the count was > than 0, if so it updated the message with the correct numnber of taps, otherwise it displayed the message saying "You haven't tapped yet". I then called this function after count is set in the onCreate as well as when the button is pressed in myButtonPressed
+
+    @SuppressLint("SetTextI18n")
+    fun myMessageSet() {
+        if (count > 0) {
+            myMessage.text = "You clicked $count times."
+        }
+        else {
+            myMessage.text = "You havent clicked yet"
+        }
+    }

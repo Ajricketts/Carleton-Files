@@ -1,0 +1,227 @@
+COMP 1601 2021W Tutorial 8 Solutions
+
+1. Add another picture to the assets of PicViewer2A.  How can you make
+   sure this pic is shown by default?
+
+Add a pic by adding an image file to
+PicViewer2A/app/src/main/res/drawable.  Make sure the filename is all
+lowercase and numbers (no uppercase, no dashes or other special
+characters).  This file "roshi2" is then accessible as R.drawable.roshi2.
+
+To make this pic shown by default, change line 16 to assign pic to the
+new drawable asset, e.g.
+
+   private var pic = R.drawable.roshi2
+
+
+2. How do you change the code so your added pic will appear eventually
+   when clicking on the current image?
+
+We change toggleImage() (lines 62-69) so it returns the new image.  We
+could just add a new case to the if statement, but that's ugly.  It is
+better to define an array of the pictures and then rotate through
+those, and then store the current image as an index into this array.
+So then we add a declaration of pics just after appName (line 13):
+
+  val pics = arrayOf(R.drawable.kittens, R.drawable.roshi, R.drawable.roshi2)
+
+We then add a declaration for picIndex to the top of MainActivity
+(after the declaration of pic):
+
+  private var picIndex = 0
+
+And finally, we replace toggleImage with the following:
+
+    fun toggleImage(v: View) {
+        picIndex = (picIndex + 1) % pics.size
+        pic = pics[picIndex]
+        updateImage()
+    }
+
+(It should really be renamed nextImage to better follow its use.  To
+do so, rename the function and then rename the onClick handler for the
+ImageView.)
+
+
+3. How many widgets do you have to move in order to get the input
+   fields and their labels moved to the left side of the screen or
+   centered?  Why?
+
+We just need to adjust y, as everything else is anchored to it.
+Specifically, the othe EditTexts are positioned above the y field,
+and the labels are anchored so they end just before the start of each
+entry field.  For example, we can set android:layout_marginEnd="128dp"
+for y and it will shift all of the fields to the left.
+
+
+4. What values do the fields take on when you delete all the text?  Is
+   it the same for every field?
+
+When everything is deleted from the rotation field, the value gets set
+to 0.  This happens because new_r becomes null and so the else clause
+in lines 79-82 is run.  The afterTextChanged handlers for pXWatcher,
+scaleWatcher, and PicWatcher (for Y) do nothing if tthe
+toFloatOrNull() conversion fails, leaving the previous value in
+effect.
+
+
+5. Change the EditText input widgets so the rotation, X, and Y fields
+   can accept negative numbers.
+
+For the EditText widgets for rotation, X, and Y in activity_main.xml,
+change the android:inputType to be "numberSigned" rather than
+"number".
+
+
+6. There is a lot of duplicated code in MainActivity.kt.  What is the
+   primary source of duplicated code?
+
+The primary source of duplicated code is requiring a separate watcher
+for each input field as well as having a separate state variable
+declaration.
+
+
+7. How can the PicWatcher class be used to greatly reduce the amount
+   of duplicated code?
+
+We can replace all of the other watchers with instances of PicWatcher.
+For example, we create PicWatchers for the other values:
+
+    val r = PicWatcher("rotation", 0F, ::updateImage)
+    val s = PicWatcher("scale", 1F, ::updateImage)
+    val X = PicWatcher("X", 0F, ::updateImage)
+
+Next we can use these as TextChangedLister's in onCreate:
+
+        rotationInput = findViewById(R.id.rotation)
+        rotationInput.addTextChangedListener(r)
+
+        scaleInput = findViewById(R.id.scale)
+        scaleInput.addTextChangedListener(s)
+
+        pXInput = findViewById(R.id.x)
+        pXInput.addTextChangedListener(X)
+
+Then, we change updateImage to use the PicViewer values:
+
+    fun updateImage() {
+        p.setImageResource(pic)
+        p.setX(X.value)
+        p.setY(Y.value)
+        p.setRotation(r.value)
+        p.setScaleX(s.value)
+        p.setScaleY(s.value)
+    }
+
+And finally we can remove all of the unneeded declarations and
+TextWatcher objects.
+
+
+8. How can you change the fields so they all take on a value of zero
+   when all text is deleted?
+
+Since we've consolidated to just use PicWatcher, we just have to
+change it to the following:
+
+class PicWatcher: TextWatcher {
+    var value: Float
+    var default_value: Float
+    var name: String
+    var update: () -> Unit
+
+    override fun afterTextChanged(s: Editable) {
+        val new_value = s.toString().toFloatOrNull()
+
+        if (new_value != null) {
+            value = new_value
+            Log.d(appName, "Set ${name} to ${value}.")
+        } else {
+            value = default_value
+            Log.d(appName, "Set ${name} to default value ${value}.")
+        }
+
+        update()
+    }
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+    }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+    }
+
+    constructor(n: String, v: Float, u: () -> Unit) {
+        value = v
+        default_value = v
+        name = n
+        update = u
+    }
+}
+
+We've added a default vaule that is initialized in the constructor and
+we've changed the afterTextChanged() method to call update() at the
+end always and to update the value to the default value when the
+conversion of new_value fails.
+
+
+9. Change PicWatcher so its constructor takes an additional function
+   as an argument, clamp(), that takes a float as an argument and
+   returns a float.  Use this new function to implement appropriate
+   clamping functions for each values as follows: 0 <= scale <= 5, 0
+   <= rotation <= 720, -1000 <= x, y <= 1000.  If the current value is
+   outside the range, it should be set to either the smallest or the
+   largest value in the range, as appropriate.
+
+First, add in a declaration for clamp to PicWatcher:
+
+  var clamp: (Float) -> Float
+
+Then, in PicWatcher's afterTextChanged method, change the then clause (original line 147) to be:
+
+  value = clamp(new_value)
+
+And finally change the PicWatcher declarations to be as follows:
+
+    val r = PicWatcher("rotation", 0F, ::updateImage)
+    {r ->
+        if (r > 720F) return@PicWatcher 720F
+        if (r < 0F) return@PicWatcher 0F
+        r
+    }
+    val s = PicWatcher("scale", 1F, ::updateImage)
+    {s ->
+        if (s > 5F) return@PicWatcher 5F
+        if (s < 0) return@PicWatcher 0F
+        s
+    }
+    val X = PicWatcher("X", 0F, ::updateImage, ::clamp_xy)
+    val Y = PicWatcher("Y", 0F, ::updateImage, ::clamp_xy)
+
+    fun clamp_xy(v: Float): Float {
+        if (v > 1000F) return 1000F
+        if (v < -1000F) return -1000F
+        return v
+    }
+
+Note we define a named function for X and Y so we don't have to define this function twice.
+
+
+10. When PicViewer2A is rotated, it preserves its state. Add the
+    following method to MainActivity():
+
+     override fun onSaveInstanceState(outState: Bundle) {
+          Log.d(appName, "State saved")
+     }
+
+    This change should cause PicViewer2A to no longer preserve state
+    across rotations. How can you modify this function so it again
+    preserves the app's state? What does this change tell you about how
+    PicViewer2A works?
+
+To fix it, we just have to add the following:
+
+   super.onSaveInstanceState(outState)
+
+This call invokes the onSaveInstanceState method of the superclass.
+The fact that this works means that other parts of the app (likely the
+EditText widgets) implement this method, thus preserving their own
+state in the state Bundle.

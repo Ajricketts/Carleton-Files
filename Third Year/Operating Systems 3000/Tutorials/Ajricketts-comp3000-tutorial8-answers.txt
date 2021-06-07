@@ -1,0 +1,95 @@
+COMP 3000 Tutorial 8
+Alyxander-Jacob Ricketts
+101084146
+
+Part A
+----------------
+
+Question 1:
+----------------
+
+ - You can also run make clean to "cleanup" and remove all the files the
+	makefile created (this must be setup in your makefile of course).
+	
+ - There is also multiple options that can alter the functionality of
+	the make command.
+	
+	
+Question 2:
+-----------------
+
+ - When you try and write too much data to /dev/remember you get a write
+	error stating there is no space left on the device. It will write as
+	much data as the buffer of remember will allow.
+	
+ - The limit is being determined by the PAGE_SIZE variable which is determined
+	by the linux kernel. You can determine the default page size by running there
+	getconf PAGE_SIZE command.
+	
+
+Question 3:
+-----------------
+
+ - Data is being allocated in the init_saved_data() function, more specifically,
+	when the all_pages() function is run.
+	
+ - Data is being deallocated in the free_saved_data() function when the __free_pages()
+	function is being run.
+	
+
+Question 4:
+-----------------
+
+ - You can increase the ammount of data that /dev/remember stores by changing
+	the saved_data_order variable. This variable tells the alloc_pages() function
+	how many pages you would like to request. Pages are allocated in size of 2^n,
+	so with the default value of saved_data_order being 0, you are requesting 2^0
+	pages or 1 page. If you increase the variable to 1, now you are requesting 2^1
+	pages or 2 pages and so on.
+	
+
+Question 5
+-----------------
+
+ - The kernel uses virtual memory addresses for its own data structres.
+ 
+ - The page table is the data structre used to map virtual memory addresses to its
+	physical counter part.
+	
+	
+Question 6:
+-----------------
+
+ - We are copying data using the copy_from_user() and copy_to_user() functions.
+ 
+ - No it is not the same way as we were getting data to and from kernel space before.
+	Before we were reading data about the userspace from the task_struct, and then
+	using the snprintf() function to display our message to the user.
+	
+Question 7:
+-----------------
+
+ - We changed the permisions of the device from 0444 to 0666 which allows for both
+	and write permisions. This was done in the [module]_devnode() function.
+
+
+Part B
+-----------------
+
+Question 1:
+-----------------
+
+ - If you remove the remember module while another proccess is accessing it nothing
+	nothing happens. But if you try to reload the remember module you will crash the
+	kernel and will have to reboot.
+
+ - If you try and call class_create() in a module using a class name that already
+	exists in the kernel then you will get an operation not permitted error when 
+	you try and load the module.
+
+
+** As it said part B was optional, I stoped after this**
+
+
+
+ 

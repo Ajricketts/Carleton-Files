@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>COMP 2406</title>
+<link href="template.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<p class="header">COMP 2406 - Winter 2019 Tutorial 5</p>
+<p class="header subheader">Real-Time Collaboration with Sockets</p>
+<hr/>
+<p>&copy; L.D. Nel 2019</p>
+<hr />
+<p class="red">Revisions will be noted here</p>
+<p class="red">&nbsp;</p>
+<hr />
+<p class="segment-header">Description:</p>
+<p>The purpose of this tutorial is to get you  working using npm's <span class="black-bold">socket.io</span> and web sockets to implement a real-time collaborative application. The work you do in this tutorial will form a major part of what is needed for Assignment 3. This introduces the use-base where the server can send data to the client that is not in direct response to a request from that client.</p>
+<p>The demo code provided for you implements the collaborative app based on polling (each client keeps asking the server over and over and over for updated information.) Polling is simple to implement but expensive (lots of network traffic) and often not very practical. Here we want to refactor the code to use web sockets instead. <span class="black-bold">Refactoring</span> means to change the internal structure of code without changing what it does. In particular, we will use the <span class="black-bold">socket.io</span> npm module that is very popular for this purpose. This will be our first npm module that is not part of node.js itself.</p>
+<p>This will also be our first example of asynchronous communcation between client server. That is, the server can send a message to the client without it being in response to request from that client. All the previous tutorials and assignments have used a simpler request-response model  where the server can only &quot;talk&quot; to the clients in response to a request.</p>
+<p>There is not a lot of code to write for this tutorial but there is quite a lot to understand before you can do so. Study the demo code carefully until you are thoroughly familiar with it before you start your refactoring. You will definely have to start this ahead of the actual tutorial session. The answer code you write will be based on the socket-based chat servers presented in the course notes: Real-Time Collaboration with Web Sockets.</p>
+<p class="red">IMPORTANT: This tutorial is meant as a homework assignment and for you to demonstrate your results at your tutorial session. You will not be able to complete it if you only start when you come to the tutorial. You will need to learn some basics of javascript on your own and come up with a strategy to solve the problems.</p>
+<p>To get credit for the tutorial you must complete, or make significant progress on, the exercise problems provided and demonstrate your results to the tutorial TA before you leave the tutorial.<br />
+</p>
+<hr/>
+<p class="segment-header">&nbsp;</p>
+<p class="segment-header">Preliminary:<br />
+</p>
+<p>Open the  the   <span class="code">demo_code</span> folder  and run the  server found there. It has an accompanying <span class="code">html</span> folder from which it will serve the client-side html and javascript files. When the browser requests <span class="code">http://localhost:3000/canvasWithTimer.html</span> you should see a browser application that looks familiar by now. </p>
+<p><img src="images/demo1.png" width="659" height="458" alt="demo1" /></p>
+<p>&nbsp;</p>
+<p>To test the app you need to open several browser windows to the same location. Open two or three browser windows to this location and notice the following.</p>
+<p>You can drag the words around with the mouse on any given client but that will not be part of this exercise.</p>
+<p>You can use the arrow keys to move the blue box around. When you do it also moves in all the other browser clients. This happens because all the clients are continously asking the the server where the blue box is. This code is using <span class="black-bold">polling</span> and it's not a good solution for real-time collaboration.</p>
+<p>Locate the function <span class="code">pollingTimerHandler()</span> in the client-side javascript. Figure out how it works then proceed with the problem exercises.</p>
+<p>In the course notes there is an example chat server implemented with sockets using the npm socket.io module. You should use that code as a model and <span class="black-bold">refactor</span> this polling-based application to use socket.io as well.</p>
+<p>&nbsp;</p>
+<p class="segment-header">Problem 1)</p>
+<p>In order to implement a solution using socket.io we need to install the npm socket.io module. Open a terminal to the same directory as your <span class="code">server.js</span> code and execute:</p>
+<p class="code">npm install socket.io</p>
+<p>A <span class="code">node_modules</span> directory will be created as a result. This is our first example of installing a module that is not built into node.js itself. (During installation things will seem to pause but just wait it out until it finishes. There might be some warnings as well which we should be able to ignore. Finally a <span class="code">package-lock.json</span> might be created depending on which version of npm you are running; again ignore that for now.</p>
+<p><img src="images/problem1-1.png" width="940" height="734" alt=""/></p>
+<p>&nbsp;</p>
+<p>[By the way. If you change the folder name where your static files are stored you will need to delete the node_modules directory and re-install the socket.io module.]</p>
+<p>&nbsp;</p>
+<p class="segment-header">Problem 2)</p>
+<p> Modify  <span class="code">server.js</span> organization to resemble that of the socket.io based chat application in the notes. Here we are just setting the server up to make it easier to use socket.io but it won't be using the sockets yet. The code might look something like this. Notice we've made the http server callback a separate <span class="code">handler</span> function:</p>
+<pre>
+const app = require('http').createServer(handler)
+const io = require('socket.io')(app) //wrap server app in socket io capability
+const fs = require("fs") //need to read static files
+const url = require("url") //to parse url strings
+
+const PORT = process.env.PORT || 3000
+app.listen(PORT) //start server listening on PORT
+
+//...
+
+function handler(request, response) {
+  //...
+}
+</pre>
+<p>&nbsp;</p>
+<p>Launch the server and verify that the application still works. It will still be using polling but at least it's set up to incorporate sockets more easily.</p>
+<p>&nbsp;</p>
+<p class="segment-header">Problem 3)</p>
+<p>Now for the main part. Implement the server-side socket code to expect the blue box data to arrive at the socket and to broadcast that data to everyone  who is connected.</p>
+<pre>
+io.on('connection', function(socket){
+  socket.on('blueBoxData', function(data){
+    console.log('RECEIVED BOX DATA: ' + data)
+    //to broadcast message to everyone including sender:
+    io.emit('blueBoxData', data) //broadcast to everyone including sender
+  })
+})
+</pre>
+<p>At this point you can remove all the handling of the box data in the <span class="code">handler()</span> function as it won't be needed anymore.</p>
+<p>Add the script to <span class="code">canvasWithTimer.html</span> that requests the client-side <span class="code">socket.io.js</span> javascript:</p>
+<pre>
+    &lt;script src="/socket.io/socket.io.js"&gt;&lt;/script&gt;
+</pre>
+<p>&nbsp;</p>
+<p>Add the javascript in <span class="code">canvaWithTimer.js</span> to create the client-side socket:</p>
+<pre>
+//connect to server and retain the socket
+let socket = io('http://' + window.document.location.host)
+//let socket = io('http://localhost:3000')
+
+socket.on('blueBoxData', function(data) {
+  console.log("data: " + data)
+  console.log("typeof: " + typeof data)
+  let locationData = JSON.parse(data)
+  movingBox.x = locationData.x
+  movingBox.y = locationData.y
+  drawCanvas()
+})
+</pre>
+<p>Finally modify everwhere in <span class="code">cavasWithTimer.js</span> where the client uses a POST message to send the blue box data to the server to use the socket instead. For example replace:</p>
+	<pre>
+  //update the server with a new location of the moving box
+  $.post("positionData", jsonString, function(data, status) {
+    //...
+  })
+</pre>
+<p>with </p>
+<pre>
+  //update the server with a new location of the moving box
+  socket.emit('blueBoxData', jsonString)
+  
+</pre>
+<p>When making these changes be mindful of whether JSON or just plain text is being passed between the client and server. It should be JSON strings representing the blue box location. (If you are unsure print the data object to the console to see what it is.)</p>
+<p>When you have completed all these changes you should be able to move the blue box in one browser with the arrow keys and watch on another browser as the box moves along in a synchronized fashion. </p>
+<p>Congratulations this is a major refactor. The code is no longer using the inefficient polling strategy. The animation probably looks better, but more important you would now be able to handle much more complex collaboration that would not be possible with polling.</p>
+<p>&nbsp;</p>
+<p><img src="images/demo2.png" width="667" height="462" alt="demo2" /></p>
+<p>&nbsp;</p>
+<p class="red">When you have completed these three problems demonstrate your work to the tutorial TA to get credit for the tutorial.</p>
+<p>&nbsp;</p>
+<h2>&nbsp;</h2
+>
+<p>&nbsp;</p>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+
+multiSignalSpawn: multiSignalSpawn.c
+	gcc -o multiSignalSpawn multiSignalSpawn.c

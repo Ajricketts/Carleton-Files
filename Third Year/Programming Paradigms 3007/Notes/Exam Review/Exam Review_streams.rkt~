@@ -1,0 +1,17 @@
+
+(define-syntax stream-cons
+  (syntax-rules()
+    (stream-cons a b (cons a (delay b)))))
+
+(define (stream-car stream)
+  (car stream))
+
+(define (stream-cdr stream)
+  (force (cdr stream)))
+
+(define (stream-ref n stream)
+  (if (= n 0)
+      (stream-car stream)
+      (stream-ref (- n 1) stream)))
+
+(define (stream-map

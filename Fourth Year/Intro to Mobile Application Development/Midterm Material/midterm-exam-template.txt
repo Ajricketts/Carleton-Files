@@ -1,0 +1,51 @@
+COMP 1601 2021W Midterm Exam
+Name: AJ Ricketts
+Student ID: 101084146
+
+1a: String
+
+1b: Function (More specifically a function type, made up of its paramaters and return type)
+
+1c: Optional (Double?)
+
+1d: Allows the paramater to not have a argument label, the argument is not named, all it needs is a double passed to it.
+
+1e: allows what convert is assigned to to not have a label, this line is needed because we are not yet giving convert a value so implicit typing cannot yet occur.
+
+1f: -> denotes the return type, this variable will return an optional double
+
+1g: The ? indicates that it is an optional. This means that there is a vlaue that will either be a double, or if not a double than nil
+
+2: This else clause is executed when converting the value passed into the function to a double failed. The if let is in place to unwrap the Double? from the passed in paramater, and if this returns nil, then the else clause will run.
+
+3: The code being run by this call is the code inside the Converter struct (lines 3-21) using the given pamaters. I know this because the Converter() syntax is used to create an instance of a struct (and the values in the conversions dictionary are specified to take a Converter instance)
+
+4: let conversion = conversions["km to mi"]
+            if let doubleKs = Double(ks) {
+                let m = conversions["km to mi"]!.convert(doubleKs)
+            }
+
+
+5a: The image is declared as a State variable on line 11
+
+5b: The value of theImage is used to access the asset with the given name defined by theImage, this asset is in turn used to create an Image object.
+
+5c: The value of the image is changed when the user selects a different menu option. More specifically, it is changed when creating the buttons in the Menu on lines (24-33). (Directly changed on lines 26 and 30)
+
+5d: Yes, the value of theImage can be read inside of tapReset(), this is because the image is passed to the ActiveImage view as a binding, so although theImage is declared in ContentView, tapReset can still access it because of that binding
+
+6a: Line 78 is called every time the user is doing the magnifying gesture, this happens continously as the user is magnifying as it within an onChanged
+
+6b: if currentAmount was replaced with finalAmount on line 78 then every time the user is done doing the gesture, and then starts another one, the magnification would go back to the original spot of the first gesture before starting the new one.
+
+6c: magnifying is used in GeometryReader when defining the gestures, more specifically on line 57
+
+6d: Line 78 is run more frequently as it is being run as the user is doing the gesture while lines 81 and 82 are being run when the user completes the gesture. This is because line 78 is within an onChanged, and lines 81 and 82 are within an onEnded.
+
+7a: The possible values of moved are either true or false.
+
+7b: if we replaced it with just .position(position) then the image would never get reset because the reset functions (tapReset() and resetState()) use the moved variable to set the picture back to the default position. When switching pictures, the position would also keep the last changes from the previous picture.
+
+7c: The .position argument determines the position by checking if the position of the image has moved, if it has moved (and therefore moved = true), then it used the position variables value, if it has not (and therefore moved = false) then it is set to a CGPoint that has the x and y coordinates of half the GeometryReaders width and height respectively
+
+7d: No they do not have to use the same name, as the moved in the ActiveImage view is a binding, it can be any name it wants as long as when the view is called and the binding is passed it has the same name. In other words the ActiveImage view call in ConvtentView should have the name you would like for moved, but still with the $moved binding.

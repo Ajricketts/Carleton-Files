@@ -1,0 +1,3 @@
+
+singleSpawn: singleSpawn.c
+	gcc -o singleSpawn singleSpawn.c

@@ -1,0 +1,335 @@
+COMP 1601 2021W Assignment 4
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1: Code taken from assignment 8 solutions to ensure starting with desired funcitonality:
+
+	package carleton.comp1601.picviewer2a
+
+	import androidx.appcompat.app.AppCompatActivity
+	import android.os.Bundle
+	import android.text.Editable
+	import android.text.TextWatcher
+	import android.util.Log
+	import android.view.View
+	import android.widget.EditText
+	import android.widget.ImageView
+
+	val appName = "PicViewer2A"
+	val pics = arrayOf(R.drawable.kittens, R.drawable.roshi, R.drawable.fish)
+
+	class MainActivity : AppCompatActivity() {
+	    private lateinit var p: ImageView
+	    private var pic = R.drawable.kittens
+	    private var picIndex = 0
+	    private lateinit var rotationInput: EditText
+	    private lateinit var scaleInput: EditText
+	    private lateinit var pXInput: EditText
+	    private lateinit var pYInput: EditText
+
+	    val r = PicWatcher("rotation", 0F, ::updateImage)
+	    {r ->
+	        if (r > 720F) return@PicWatcher 720F
+	        if (r < 0F) return@PicWatcher 0F
+	        r
+	    }
+	    val s = PicWatcher("scale", 1F, ::updateImage)
+	    {s ->
+	        if (s > 5F) return@PicWatcher 5F
+	        if (s < 0) return@PicWatcher 0F
+	        s
+	    }
+	    val X = PicWatcher("X", 0F, ::updateImage, ::clamp_xy)
+	    val Y = PicWatcher("Y", 0F, ::updateImage, ::clamp_xy)
+
+	    fun clamp_xy(v: Float): Float {
+	        if (v > 1000F) return 1000F
+	        if (v < -1000F) return -1000F
+	        return v
+	    }
+
+	    override fun onCreate(savedInstanceState: Bundle?) {
+	        super.onCreate(savedInstanceState)
+	        setContentView(R.layout.activity_main)
+	        if (savedInstanceState != null) {
+	            // do something
+	        }
+
+	        p = findViewById(R.id.mypic)
+
+	        rotationInput = findViewById(R.id.rotation)
+	        rotationInput.addTextChangedListener(r)
+
+	        scaleInput = findViewById(R.id.scale)
+	        scaleInput.addTextChangedListener(s)
+
+	        pXInput = findViewById(R.id.x)
+	        pXInput.addTextChangedListener(X)
+
+	        pYInput = findViewById(R.id.y)
+	        pYInput.addTextChangedListener(Y)
+
+	        updateImage()
+	        Log.d(appName, "Activity Created")
+	    }
+
+	    override fun onSaveInstanceState(outState: Bundle) {
+	        super.onSaveInstanceState(outState)
+	        Log.d(appName, "State saved")
+	    }
+
+	    fun updateImage() {
+	        p.setImageResource(pic)
+	        p.setX(X.value)
+	        p.setY(Y.value)
+	        p.setRotation(r.value)
+	        p.setScaleX(s.value)
+	        p.setScaleY(s.value)
+	    }
+
+	    fun nextImage(v: View) {
+	        picIndex = (picIndex + 1) % pics.size
+	        pic = pics[picIndex]
+	        updateImage()
+	    }
+	}
+
+	class PicWatcher(n: String, v: Float, u: () -> Unit, c: (Float) -> Float) : TextWatcher {
+	    var value: Float = 0.0f
+	    var default_value: Float = v
+	    var name: String = n
+	    var update: () -> Unit = u
+	    var clamp: (Float) -> Float = c
+
+	    override fun afterTextChanged(s: Editable) {
+	        val new_value = s.toString().toFloatOrNull()
+
+	        if (new_value != null) {
+	            value = clamp(new_value)
+	            Log.d(appName, "Set ${name} to ${value}.")
+	        } else {
+	            value = default_value
+	            Log.d(appName, "Set ${name} to default value ${value}.")
+	        }
+
+	        update()
+	    }
+
+	    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+	    }
+
+	    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+	    }
+
+	}
+
+
+
+2: To get rid of the title bar for the screens, I added the following code to the themes.xml files in both the light and the dark modes:
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        *Code taken from tutorial 9*
+
+3: To create a title screen I first created a layout (titlescreen.xml), this layout consisted of a TextView for a title with a display3 font, another texview below for a description, and a button at the bottom of the screen to take you to the main screen. I then created a new class file called TitleScreen.kt which set the contentView to the titlescreen layout. This class also had a function called startMain that created a new intent for the MainActivity and started this intent. The button in the titlescreen layout had its onClick handler set to this function. Lastly, in AndroidManifest.xml I made it so that TitleScreen was the main intent and launched first. The changes for the various files below:
+
+Changes in titlescreen.xml:
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:app="http://schemas.android.com/apk/res-auto"
+	    xmlns:tools="http://schemas.android.com/tools"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+
+	    <TextView
+	        android:id="@+id/app_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginStart="37dp"
+	        android:layout_marginTop="56dp"
+	        android:layout_marginEnd="37dp"
+	        android:layout_marginBottom="23dp"
+	        android:text="@string/pic_viewer_demo"
+	        android:textAlignment="center"
+	        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+	        android:textIsSelectable="true"
+	        android:textSize="36sp"
+	        android:textStyle="bold"
+	        app:layout_constraintBottom_toTopOf="@+id/description"
+	        app:layout_constraintEnd_toEndOf="parent"
+	        app:layout_constraintStart_toStartOf="parent"
+	        app:layout_constraintTop_toTopOf="parent" />
+
+	    <TextView
+	        android:id="@+id/description"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="147dp"
+	        android:text="@string/comp_1601_asssignment_4"
+	        android:textSize="24sp"
+	        android:textStyle="bold"
+	        app:layout_constraintEnd_toEndOf="parent"
+	        app:layout_constraintStart_toStartOf="parent"
+	        app:layout_constraintTop_toTopOf="parent" />
+
+	    <Button
+	        android:id="@+id/button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginStart="39dp"
+	        android:layout_marginBottom="51dp"
+	        android:gravity="center"
+	        android:onClick="startMain"
+	        android:text="@string/click_to_continue_to_applicaiton"
+	        app:layout_constraintBottom_toBottomOf="parent"
+	        app:layout_constraintStart_toStartOf="parent" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+Changes in TitleScreen.kt:
+
+	package carleton.comp1601.picviewer2a
+
+	import android.content.Intent
+	import android.os.Bundle
+	import android.util.Log
+	import android.view.View
+	import androidx.appcompat.app.AppCompatActivity
+
+	class TitleScreen : AppCompatActivity() {
+	    override fun onCreate(savedInstanceState: Bundle?) {
+	        super.onCreate(savedInstanceState)
+	        setContentView(R.layout.titlescreen)
+	        Log.d(appName, "Title screen created")
+	    }
+
+	    fun startMain(v: View) {
+	        Log.d(appName, "Starting Main button pressed")
+	        intent = Intent(this, MainActivity::class.java)
+	        startActivity(intent)
+	        Log.d(appName, "Starting Main intent sent")
+	    }
+	}
+
+
+Changes in AndroidManifest.xml:
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	    package="carleton.comp1601.picviewer2a">
+
+	    <application
+	        android:allowBackup="true"
+	        android:icon="@mipmap/ic_launcher"
+	        android:label="@string/app_name"
+	        android:roundIcon="@mipmap/ic_launcher_round"
+	        android:supportsRtl="true"
+	        android:theme="@style/Theme.PicViewer2A">
+	        <activity android:name=".TitleScreen">
+	            <intent-filter>
+	                <action android:name="android.intent.action.MAIN" />
+
+	                <category android:name="android.intent.category.LAUNCHER" />
+	            </intent-filter>
+	        </activity>
+	        <activity android:name=".MainActivity" android:exported="true" />
+	    </application>
+
+	</manifest>
+
+
+
+4: To add the name of the picture as the title above it, I first created an array of strings that had the name of the pictures in the same order the array of images is (pics). I then added a TextView in activity_main.xml with a default text of "Kittens" (as it is the first photo). I named this TextView image_title (and initialized it) and then set the text to be the element in the array of names with the same index as the array of images is on (using the picIndex variable). The setting the text was done in the updateImage() funciton so the title was updated every time the image was switched. 
+
+Changes to activity_main.xml:
+
+		.
+		.
+		.
+    <TextView
+        android:id="@+id/imageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="98dp"
+        android:gravity="center"
+        android:onClick="openPage"
+        android:text="@string/image_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:tag="kittens"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/mypic"/>
+
+Changes to MainActivity.kt:
+
+	Array of names (initialized under array of images):
+		val picNames = arrayOf("Kittens", "Roshi", "Fish")
+
+	Addition to onCreate():
+		image_title = findViewById(R.id.imageTitle)
+		
+	Addition to updateImage():
+		image_title.text = picNames[picIndex]
+        Log.d(appName, "Title Name updated to ${image_title.text}")
+
+
+5: To have the title open up a DuckDuckGo search result I simply created a function (openPage) and made a new intent that parsed a URI to the DuckDuckGo website with a custom crafted URL including the current title name (using the array of names created in the previous question). This funcion was set to the TextViews onClick handler:
+
+openPage() funciton:
+
+    fun openPage(v: View) {
+        Log.d(appName, "Opening URL")
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://duckduckgo.com/?q=" + picNames[picIndex] + "&iax=images&ia=images"))
+        startActivity(intent)
+        Log.d(appName, "URL intent sent")
+    }
+
+Added to TextView xml in activity_main.xml:
+	android:onClick="openPage"
+
+Must insure android:exported = "true" in AndroidManifest.xml:
+    <activity android:name=".MainActivity" android:exported="true" />
+
+	
+6: In order to add the onTouchListener I created a variable named trackImage which was the onTouchListener. This onTouchListener got the correct X and Y coordinates when the user presses down on the images and then animates when the user moves the image. This onTouchListener was set to the imageView in the onCreate method. To update the X and Y feilds as the image moves I set the text of the EditText widgets to be these correct X and Y coordinates
+
+trackImage: 
+
+    val trackImage = object: View.OnTouchListener {
+        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+            if (event == null || v == null) {
+                return false
+            }
+
+            val action = event.action
+
+            if (action == MotionEvent.ACTION_DOWN) {
+                xCoordinate = v.getX() - event.getRawX()
+                yCoordinate = v.getY() - event.getRawY()
+                Log.d(appName, "Image repositioned to ${xCoordinate}, ${yCoordinate}")
+            } else if (action == MotionEvent.ACTION_UP) {
+                Log.d(appName, "Image repositioned to ${xCoordinate}, ${yCoordinate}")
+            } else if (action == MotionEvent.ACTION_MOVE) {
+                v.animate().x(event.getRawX() + xCoordinate).y(event.getRawY() + yCoordinate).setDuration(0).start();
+                pXInput.setText((event.getRawX() + xCoordinate).toString())
+                pYInput.setText((event.getRawY() + yCoordinate).toString())
+                Log.d(appName, "Image repositioned to ${xCoordinate}, ${yCoordinate}")
+            }
+            return true;
+        }
+    }
+
+Changes to onCreate():
+
+	p.setOnTouchListener(trackImage)
+
+7: When rotated, the position of the image is preserved due to the TextFields (for X and Y that are getting updated) save the state of their fields and the text in it. Because of this the TextWatcher (PicWatcher) has its value saved 
+
+8: Due to the updating of X and Y in ACTION_DOWN, I was not able to implement the onClick as it would register the movement as a click. Therefore everytime you move the picture it would switch the photo.

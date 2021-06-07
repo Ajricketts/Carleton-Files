@@ -1,0 +1,78 @@
+COMP 3000 Assignment 1
+Alyxander-Jacob Ricketts
+101084146
+Friday September 27th, 2019
+
+Question 1: 
+
+When 3000shell is normally run in a terminal window on linux, file decriptors 0,1 and 2 are sdtin, stdout and stderr respectively. We know this
+because by default, FD's 0, 1 and 2 are reserved for stdin, stdout and stderr. This can also be seen by running ls -la while in /proc/proccess id of 3000shell/fd
+and running ls -la. The output of this command is: 
+
+student@COMPXXXX:/proc/7894/fd$ ls -la
+total 0
+dr-x------ 2 student student  0 Sep 26 18:54 .
+dr-xr-xr-x 9 student student  0 Sep 26 18:53 ..
+lrwx------ 1 student student 64 Sep 26 18:54 0 -> /dev/pts/0
+lrwx------ 1 student student 64 Sep 26 18:54 1 -> /dev/pts/0
+lrwx------ 1 student student 64 Sep 26 18:54 2 -> /dev/pts/0
+
+Given this output, we see that all these file descriptors are outputting to pts/0 which would be the terminal we are currently on and therefore stdin,
+stdout, and stderr.
+
+
+
+Question 4: 
+
+The behaviour of 3000shell would not change as line 241 (dup2(fd, 1);) is setting the old file descriptor, given from the output of the
+creat() call, and setting it to file descriptor one which is stdout. After removing line 241, programs still print to stdout
+
+
+
+
+Question 6: 
+
+The value set on line 317 is used in line 334 when searching the enviroment variables given to find the user name. You can force this value to be
+used instead of the actual username if you change line 337 to promt_loop(default_username, path, enp).
+
+
+
+
+
+Question 7: 
+
+The owner of the file will be student, the group will also be student. Owner, group and others will all have read and write permissions as
+the sybolic represtation of 0666 is -rw-rw-rw-.
+
+
+
+
+Question 8:
+
+plist() generates many openat(), read(), close() and write calls. This is to get all the current running processes names. For example:
+
+openat(AT_FDCWD, "/proc/1/comm", O_RDONLY) = 4
+read(4, "systemd\n", 32)                = 8
+close(4)                                = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+write(1, "1: systemd\n", 111: systemd
+)            = 11
+openat(AT_FDCWD, "/proc/2/comm", O_RDONLY) = 4
+read(4, "kthreadd\n", 32)               = 9
+close(4)                                = 0
+write(1, "2: kthreadd\n", 122: kthreadd
+)           = 12
+
+
+
+
+Question 9:
+
+On line 234 instead of calling wait you could call the signal handler function and pass ret_status as the parameter in order to have only the
+signal handler call the wait function.
+
+
+
+
+
+Notes: Outside sources used include man pages and online resources used to get a better understanding on file permsions and groups.

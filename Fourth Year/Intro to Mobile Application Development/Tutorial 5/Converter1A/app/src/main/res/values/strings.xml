@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Temperature Converter</string>
+    <string name="message">Enter a number please</string>
+    <string name="message2" />
+    <string name="enter_farenheit">Enter Farenheit</string>
+    <string name="enter_miles">Enter Miles</string>
+</resources>

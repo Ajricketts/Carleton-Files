@@ -1,0 +1,173 @@
+COMP 1601 Tutorial 2
+Author: AJ Ricketts
+101084146
+Friday January 29th, 2021
+
+PART A: Converter.swift
+
+1: If you changed Conversions:8 to func formatConversion(from: Double) -> String { (removing the underscore), what else would have to be changed to make this declaration correct? Why?
+
+- If you change Conversions:8 and remove the underscore then you would have to change code in the Contentview.swift file, specifically you would have to change line 47 in the ConvOutput view and give the paramater a name when you access the formatConversion function. 
+
+		- if let from = Double(fromString) {
+                Text(conv.formatConversion(from))
+            }
+
+        - Would change to:
+
+        - if let from = Double(fromString) {
+                Text(conv.formatConversion(from: from))
+            }
+
+
+2: The "inch to cm" conversion is coded differently from the others. What is different about it? How would you change it to be similar to the rest?
+
+- "inch to cm" is a function and not a closure. You could change it to be the same as the others by taking the two lines of code in the function and creating another closure inside of the map, changing line 38 and 39 in Conversions.swift from:
+
+		- "inch to cm": Converter("inches", "centimeters",
+                             InToCM)
+
+        - to
+
+        - "inch to cm": Converter("inches", "centimeters",
+                             {inch in 
+                             let cm = 2.54 * inch
+                             return cm})    
+
+
+3: When is the init method of the Converter struct (Conversions:16) called?
+
+- The init method is called every time there is a Converter instance created.
+
+
+4: Is the type declaration in Conversions:28 (the declaration of the conversions dictionary) necessary? Why?
+
+- No the type declaration in Conversions:28 is not necessary because of swifts type inference. Swift will infer the type of the key value pairs without the need to manually do it.
+
+
+5: Add a conversion for miles to kilometers.
+
+- To add a conversion for miles to kilometers I simply added:
+	
+		- "m to km": Converter("miles", "kilometers",
+                          	  {m in
+                               let k = m * 1.62313712
+                               return k
+                          	  })
+
+ to the conversions dictionaary
+
+ PART B: main.swift (Convert2Cmd)
+
+ 1: What type is convAvail?
+
+ - convAvail is a sorted collection of strings (the keys in the dictionary conversions)
+
+ 2: What is the i+1 for on main:8?
+
+ - the for loop from lines 7 to 9 in main will print the keys in the dictionary conversions.
+ - line 8 makes it so the printed list starts at a value of 1 and not zero, because the for loop will start at 0 due to the collection being indexed starting at 0.
+
+ 3: How could you change the conversion message to be of the form "Boss, I think 0 Celsius is 32 Farenheit!" with only making changes to main.swift, not Conversions.swift?
+
+ - You could simply change line 28 in main.swift to read:
+
+ 		- print("Boss, I think \(res)")
+ 		
+ 					instead of
+
+		-  print("res") 
+
+4: Why is the test on main:25 needed? Why main:26?
+
+- The test on main:25 is needed because readline() returns an optional, that is, the variable vs could return a string, or it could return nil. Optionals cannot interact with normal types such as doubles so on line 26 when you try to convert the string (really optional) to a double you get an error. The optional String? must be unwrapped to a String, therefore the test on main:25 is neeeded
+
+- The test on main:26 is needed because if there is no test, then the variable v would be an optional (Double? instead of Double). The function that is called when setting the variable res takes a Double as a paramater and therefore will not accept an optional. The variable v would be needed to be unwrapped either with a test, or force-unwrapped using !. Therefore the test on main:26 is needed
+
+
+PART C: ContentView.swift (Converter2)
+
+1: Can you combine all of the separate views into one view, getting rid of ConvMenu and ConvOutput? Show your attempt and say what happens.
+
+- I moved the contents of convMenu and convOutput to where they are called in Vstack. This required me to change the name of fromString to fromS everywhere it was used. In the code from convOutput $fromString changed to $fromS. The $ needed to be kept because variable fromS is a state variable and needs to be wrapped.
+
+
+- struct ContentView: View {
+    @State var convMode: String? = nil
+    @State var fromS = ""
+    var body: some View {
+        VStack{
+            let availConversions = [String](conversions.keys)
+            Menu("Conversions menu") {
+                ForEach(availConversions, id: \.self) {
+                    conversion in
+                    Button(conversion, action: {
+                        convMode = conversion
+                        fromS = ""
+                    })
+                }
+            }
+            Spacer()
+            if let mode = convMode {
+                let conv = conversions[mode]!
+                TextField("Enter \(conv.convFrom)", text: $fromS)
+                Spacer()
+                if let from = Double(fromS) {
+                    Text(conv.formatConversion(from: from))
+                }
+            } else {
+                Text("Please select a conversion")
+                Text("type from the menu above.")
+            }
+        
+            Spacer()
+            Spacer()
+        }
+    }
+}
+
+
+
+2: Why is there an ! on ContentView:43? How could you get rid of it?
+
+- There is a ! on ContenView:43 because conv will be an optional converter. Because of this, it either needs to be force-unwrapped using ! to abort the operation if the value contains nil, or using an if let statement so that the following code only runs if the value is not nil. Therefore ContentView:43 can be changed from:
+
+		- let conv = conversions[mode]!
+
+					to
+
+		- if let conv = conversions[mode]
+
+- with everything nested inside
+
+
+3: Add a menu to the bottom of the screen, identical to the one at the top. How hard was this to do?
+
+- This was not hard to do at all, I simply called another instance of the convMenu after the convOutput instance and spacer. Then deleted the extra spacer() call at the end to push this menu to the bottom of the screen
+
+- VStack in ContentView now looks like this:
+
+		- VStack{
+            ConvMenu(convMode: $convMode,
+                     fromString: $fromS)
+            Spacer()
+            ConvOutput(convMode: $convMode,
+                       fromString: $fromS)
+            Spacer()
+            ConvMenu(convMode: $convMode,
+                     fromString: $fromS)
+        }
+
+
+4: How could you have values from previous conversions used for new conversions? For example, if you entered in 32 for Fahrenheit, how could you keep that 32 when you switched to inches?
+
+- You could have values from previous conversions used in new conversions by simply removing where the fromString variable gets reset. This happens in the convMenu view on line 33:
+
+		- fromString = ""
+
+- This line ensure every time a new button is clicked on the menu, fromString gets reset. By simply commenting out or removing this line, the value of fromString is persistent and can be used for new conversions
+
+
+5: Could the ForEach() on ContentView:27 have been used in main? Explain.
+
+- I could not seem to get the ForEach() loop to work in main but I am not entirely sure why.

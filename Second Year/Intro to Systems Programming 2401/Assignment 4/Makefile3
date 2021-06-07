@@ -1,0 +1,3 @@
+
+multiSpawn: multiSpawn.c
+	gcc -o multiSpawn multiSpawn.c

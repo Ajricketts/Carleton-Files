@@ -1,0 +1,89 @@
+COMP 3007 Programming Paradigms
+Alyxander-Jacob Ricketts
+101084146
+
+Question 1 Tests:
+--------------------
+
+Tests for each family tree facts:
+
+  male(peter).
+  male(aj).
+  male(august
+  female(delores).
+  female(aj).
+  female(diana).
+  parent(karen,august).
+  parent(delores,karen).
+  parent(aj,karen).
+  is_mother(karen).
+  is_mother(aj).
+  is_father(aj).
+  is_father(karen).
+  is_father(peter).
+  is_uncle(aj,august).
+  is_uncle(peterjr,aj).
+  is_aunt(diana,aj).
+  is_aunt(aj,diana).
+  sister(august,miro).
+  sister(aj,miro).
+  brother(aj,august).
+  brother(miro,august).
+  brother(august,aj).
+  grandfather(peter,august).
+  grandfather(aj,peter).
+  grandmother(delores,august).
+  grandmother(delores,miro).
+  grandmother(delores,peter).
+  ancestor(delores,karen).
+  ancestor(delores,peterjr).
+  ancestor(aj,karen).
+
+
+Question 2 Tests:
+--------------------
+
+%On what team does Leon Driasaitl play, and in what position?
+  player(name(leon,driasaitl),team(City),pos(Position),_).
+
+%What is the last name of any player who has at most 15 goals?
+  player(name(_,Last),_,_,stats(Goals,_,_)),Goals =< 15.
+
+%Who plays defence? (find one name at a time via backtracking)
+  player(name(First,Last),_,pos(d),_).
+
+%What teams have a player with the first name "Alex"?
+  player(name(alex,_),team(City),_,_).
+  or
+  player(name(alex,_),team(Team),_,_). if you want the output to say team instead of City
+
+%What pairs of players play on the same team? (list one pair at a time using backtracking)
+  player(name(First1,Last1),team(City),_,_),player(name(First2,Last2),team(City),_,_),Last1\=Last2.
+
+%What players have more than 100 points? (where points = goals + assists)
+  player(name(First,Last),_,_,stats(Goals,Assists,_)),(Goals + Assists)>100.
+
+%What is the shot accuracy of the player with the most goals? (where shot accuracy = goals / shots)
+  player(name(First,Last),_,_,stats(Goals,_,Shots)), not((player(name(First2,Last2),_,_,stats(Goals2,_,Shots2)), Goals2>Goals)),Accuracy is (Goals / Shots).
+
+%Who is the least accurate left wing (lw) player?
+  player(name(First,Last),_,pos(lw),stats(Goals,_,Shots)), not((player(name(First2,Last2),_,pos(lw),stats(Goals2,_,Shots2)), ((Goals2/Shots2)<(Goals/Shots)))),Accuracy is (Goals / Shots).
+
+
+Question 3 Tests:
+--------------------
+lastEle(X,[how,are,you,today]).
+gradeMap([0, 34, 47, 52, 68, 75, 98], X).
+gradeMap([1, 50, 80, 65], X).
+split([9,5,6,1,4,2,5,8,10],5, L1, L2).
+split([9,5,6,1,4,2,5,8,10],5, [1,4,2], [9,5,6,5,8,10]).
+myNextto(a,b, [c,a,b,d]).
+myNextto(a,b, [c,a,d,b]).
+myNextto(b,c,[a,b,d,f,b,c]).
+
+
+Question 4 Tests:
+--------------------
+list([1, 2, 3]).
+list(hello).
+list([]).

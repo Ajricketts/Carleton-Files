@@ -1,0 +1,105 @@
+COMP 1601 2021W Tutorial 5
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1: to change the format of the output Celsius time for significant digits first is simply changed the %.2f to %.4f on line 29
+
+
+2: To add a line below the Celsius conversion that gave the kelvin conversion first I created a variable that equalled the Celsius conversion plus 273.15. In activity_main.xml I created a new Textview with the ID result2. I then created a lateinit variable called result2 and initialized it in the onCreate. Lastly I set result2.text to the Kelvin variable
+
+	- The result2 variable declaration:
+		private lateinit var result2: TextView
+
+	- The result2 variable initialization in onCreate:
+		result2 = findViewById(R.id.result2)
+
+	- The new Textview in activity_main.xml:
+		<TextView
+            android:id="@+id/result2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/message2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    - Setting the Kelvin variable:
+    	val K = C + 273.15
+
+    - Setting the result2 variable to the kelvin conversion and changing the Textview to display that:
+    	result2.text = String.format("%s Farenheit is %.4f Kelvin", Fs, K)
+
+
+3. This simply required me to create a variable that allowed me to combine the Html tags with the conversion variables and then use that variable in the fromHtml function and set the required Textviews to those values
+
+	- Creating the variables with the Html tags using string interporlation for both the Celcius and Kelvin strings:
+		val boldC = "<b>" + Fs + "</b>" + " Fahrenheit is " + "<b>" + String.format("%.4f Celcius", C) + "</b>"
+        
+        val boldK = "<b>" + Fs + "</b>" + " Fahrenheit is " + "<b>" + String.format("%.4f Celcius", K) + "</b>"
+
+    - Setting the Textviews to these values:
+    	TempResult.text = fromHtml(boldC,0)     (I changed the name of result for a later part of the tutorial)
+        result2.text = fromHtml(boldK,0)
+
+
+4: tad of miles to kilometres converter to the same screen I copied the entire watcher function and renamed the original one to watcherTemperature. I then pasted the watchher function below the watcherTemperature function and named it watcherDistance. I then needed to make Textviews and Edittext attributes so I added those to the activity_main.xml file. I also added another Textview and editText variable to MainActivity and called them DistResult and editDistance respectfully. These got initialized in the onCreate. Lastly I simply changed the variable names (to reflect miles and kilometers), inputed the right conversion, added the Html tags, and set the Textview to to that string.
+
+	- Additions to activity_main.xml:
+	     <EditText
+            android:id="@+id/editDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="@string/enter_miles"
+            android:inputType="numberSigned" />
+
+        <TextView
+            android:id="@+id/DistResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/message"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+
+    - MainActivity variable declaration and initialization:
+    	 private lateinit var editDistance: EditText
+    	 private lateinit var DistResult: TextView
+
+   		*In onCreate()*
+
+   		DistResult = findViewById(R.id.DistResult) 
+   		editDistance = findViewById(R.id.editDistance)   		        editDistance.addTextChangedListener(watcherDistance)
+
+
+   	- New watcher function:
+
+   		private val watcherDistance = object : TextWatcher {
+        override fun afterTextChanged(s: Editable) {
+            val Ms = editDistance.text.toString()
+            var M = Ms.toDoubleOrNull()
+
+            if (M == null) {
+                DistResult.text = "Please enter a number to convert."
+                result2.text = ""
+            } else {
+                val Kl = M * 1.60934
+                val boldKl = "<b>" + M + "</b>" + " Miles is " + "<b>" + String.format("%.4f Kilometers", Kl) + "</b>"
+                DistResult.text = fromHtml(boldKl,0)
+            }
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+    }
+
+
+5: Keywords Used: private, class, override, fun, object, lateinit
+   Explicit Types: editTemperature, TempResult, DistResult, watcherTempature
+   Implicit Types: C (Celcius variable), K (kelvin variable), boldC & boldK (strings with Html formatting)
+
+
+6: The keywords fun and lateinit seem the most mysterious to me, after lateinit was explained in class it now seems obvious but at first glance I was not sure why that was needed. Also I am still not sure what fun is for so that keyword is for sure the most mysterious for me.

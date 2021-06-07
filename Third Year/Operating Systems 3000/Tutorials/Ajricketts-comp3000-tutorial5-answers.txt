@@ -1,0 +1,43 @@
+Comp 3000 Tutorial #5
+Alyxander-Jacob Ricketts
+101084146
+
+Question 1: The numbers in the left column are the inode numbers
+
+Question 2: The logical size of the file would be 262,144,000 bytes as we filled the file with zeros in blocks of 8192 bytes and the count was set to 32k. The actual amount of space it takes up on the disk is 268,435,456 bytes
+
+Question 3: It does not consume any more space.
+
+Question 4: 
+
+Question 5: Because this file is now being treated as a file system, it has blocks just like a normal hard drive would. The output of dumpe2fs if giving you all the information on the filesystem including the information about the different groups of blocks. This means that the file is now treated as a filesystem.
+
+Question 6: You use the fsck.ext4 command with the option -c to check for errors (-c checks for bad blocks and adds them to the badblock list)
+
+Question 7: /dev/loop0 is mounted on mnt. This device is
+
+Question 8: 
+
+Question 9: This command copied the /etc folder to the /mnt folder. The -v option is the verbose option. This increases the amount of information we are given as the command is running. It is giving us information on what files are being transfered and a brief summary at the end. The -a option is is the archive option, this is a quick way of saying you want to preserve almost everything (minus hard links) (explinations of options gotten from man pages). I got a couple errors copying files. Files where I did not have permision were not copied over: 
+
+	rsync: opendir "/etc/lvm/archive" failed: Permission denied (13)
+	rsync: opendir "/etc/lvm/backup" failed: Permission denied (13)
+	rsync: opendir "/etc/polkit-1/localauthority" failed: Permission denied (13)
+	etc/
+	rsync: send_files failed to open "/etc/.pwd.lock": Permission denied (13)
+
+Question 10: Both the /etc file and the lost and found file have gone away
+
+Question 11: The "conv=notrunc" makes it so dd does not trunacate the file before it begins
+
+Question 12: You get the error:
+
+		mount: /mnt: wrong fs type, bad option, bad superblock on /
+		dev/loop0, missing codepage or helper program, or other error.
+
+Question 13: You can run mkfs.ext4 foo to make foo mountable again. The .ext4 enables this command to work because the file is in the correct filesystem type
+
+Question 14: The logical size of bar is 1073741824 bytes, but its actual size is 0 (found by running du -h bar). This is different then foo as foo actually takes up space on the disk (336k) (found by running du -h foo)
+
+Question 15: The logical size of bar does not change when you create an ext4 filesystem in it but the space consumed on disk goes up from 0 to 600k.
+

@@ -1,0 +1,54 @@
+Comp 3000 Tutorial #6
+Alyxander-Jacob Ricketts
+101084146
+
+opensnoop
+-----------------
+
+ - I assume there are so many failed open calls because the kernel is not allowing access to those files
+
+ - The kernel events it is monitoring is do_sys_open
+
+bashreadline
+-----------------
+
+ - To use bashreadline to observe what is entered into other programs that use readline (bc and gdb for example) you first find the location of one of those programs. In this case I chose bc so I entered the command which bc (which returns /usr/bin/bc). Then I looked at all the library calls of the program bc to find out where readline was (ldd /usr/bin/bc), which turned out to be /lib/x86_64-linux-gnu/libreadline.so.7. You then run bashreadline with the -s option and the location of libreadline.so you found earlier.
+
+ttysnoop
+-----------------
+
+ - You can use the tty command to find the current tty you are using. By navigating to the /dev/pts folder you can see all the pseudo tty's that have been allocated.
+
+ - The data is being truncated because bpf_probe_read() can only use a fixed size (has a buffer of a fixed size so can only read a fixed size).
+
+ - No you can not easily reduce or eliminate truncation because you would have to modify BPF which was designed to interact with the kernel and changing the functionality of the program could be as dangerous as loading code into the kernel yourself.
+
+killsnoop
+-----------------
+
+ - Yes, TERM, STOP, and KILL are all picked up by killsnopp
+
+ - When you type Ctrl-C, your program gets a SIGINT signal. When Ctrl-C is pressed this signal is always sent. You cannot stop this signal from being sent as the terminal sends this signal, but you can use a signal handler to catch it and ignore it.
+
+ - Yes there is a call to kill when putting a process in the background and then bringing it back to the foreground. This call to kill is only send when bringing the process back to the foreground though.
+
+ - There are no kill system calls in strace. I started top in one terminal window, straced that process in another, and then killed the process in another window. There was no kill system calls once the process was killed, but there was a call to exit_group(0) when the process was killed.
+
+
+syscount
+-----------------
+
+ - some frequent system calls when the system is idle would include, recvmsg, stat, poll, futex, writev, read, epoll_wait, setitimer, lseek and close
+
+ - The top 5 programs generating the most system calls is stat, recvmsg, read, lseek and poll.
+
+ - A couple programs that have high latency are poll, futex, epoll_wait, nanosleep, select and wait4.
+
+ - Yes there are many programs failing such as stat, recvmsg, read and many others (I only displayed the top 10)
+
+
+trace
+-----------------
+
+ - 
+

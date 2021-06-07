@@ -1,0 +1,109 @@
+COMP 1601 2021W Tutorial 8
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1: To add another picture to the assets of picViewer2A I dragged the picture file (fish.jpg) into android studio and onto the assets folder, I then clicked refactor. To ensure my added picture was shown by default I changed line 22 in activity_main.xml from app:srcCompat="@drawable/kittens" to app:srcCompat="@drawable/fish". You can also right click the folder in android studio and go right to the folder in file explorer and copy your image into the folder directly.
+
+2: To do this I added another if-else statement in the else of the original else statement. This one to say, if pic was roshi then set the image to roshi, if not set it to fish. The toggle image function now looks like:
+
+    fun toggleImage(v: View) {
+        if (pic == R.drawable.roshi) {
+            pic = R.drawable.kittens
+        } else {
+            if (pic == R.drawable.roshi) {
+                pic = R.drawable.roshi
+            }
+            else {
+                pic = R.drawable.fish
+            }
+        }
+        updateImage()
+    }
+
+3: If you wanted to move the widgets to the center of the screen or all the way to the left you would need to move two widgets (y and ylabel). This is because everything is constrained to them so if you move those to elements everything else will move with them. 
+
+4: The fields take on the value null when you delete all the text. This is the same for all fields as all of the text is converted to nullable types before being used to alter the picture so when the text is deleted they are all null. This causes the image to retain the last value that was typed in the field. For example if a rotation  of 45 was typed and then deleted the image would still be rotated 4 degrees.
+
+5: To allow the editText fields to take negative numbers you can simply change android:inputType="number" to android:inputType="numberSigned" in activity_main.xml for both the X and Y editText widgets.
+
+6: The main source of duplicate code is all the watchers for each element of the picture we want to have the user be able to edit.
+
+7: To get rid of all of this duplicate code we can just use the picWatcher class. This class will allow us to create picWatcher instances which can include the functionality of all of those separate classes in one based off of what parameters we give it. For example:
+
+		val Y = PicWatcher("Y", 0F, ::updateImage)
+	    val X = PicWatcher("X", 0F, ::updateImage)
+	    val rotation = PicWatcher("rotation", 0F, ::updateImage)
+	    val scale = PicWatcher("scale", 1F, ::updateImage)
+
+
+8: To do this I added an else clause to afterTextChanged in picWatcher:
+
+        else {
+            if (name!= "scale") {
+                value = 0F
+                Log.d(appName, "Set $name to $value.")
+                update()
+            }
+            else {
+                value = 1F
+                Log.d(appName, "Set $name to $value.")
+                update()
+            }
+
+9: The changes I made to the picWatcher class include adding another parameter to the constructor that took a float as an argument. I then created in line functions when I created instances for picWatcher that checked for the bounds for each specific value and set it to the maximum if the user entered number was too large: 
+
+Changes to picWatcher() (the else is still the same as above): 
+
+		class PicWatcher(n: String, v: Float, u: () -> Unit, c: (Float) -> Float): TextWatcher {
+		    var value: Float = v
+		    var name: String = n
+		    var update: () -> Unit = u
+		    var clamp: (Float) -> Float = c
+
+		    override fun afterTextChanged(s: Editable) {
+		        val new_value = s.toString().toFloatOrNull()
+
+		        if (new_value != null) {
+		            value = clamp(new_value)
+		            Log.d(appName, "Set ${name} to ${value} (wow).")
+		            update()
+		        }
+
+Changes to the calls to picWatcher():
+
+		val Y = PicWatcher("Y", 0F, ::updateImage) {c -> if (c <= 1000) { c } else { 1000F }}
+    	val X = PicWatcher("X", 0F, ::updateImage) {c -> if (c >= -1000) { c } else { -1000F } }
+    	val rotation = PicWatcher("rotation", 0F, ::updateImage) {c -> if (c <= 720) { c } else { 720F }}
+    	val scale = PicWatcher("scale", 1F, ::updateImage) {c -> if (c in 0.0..5.0) { c } else { 1F }}
+
+
+10: Adding the onSaveInstanceState function with nothing inside as instructed replaces the default saving state function which automatically saves certain things for example the text in editText widgets. It is only when you want additional things saved that you need to override this function. Because of this you can modify this function to this in order to get the app to preserve its state again:
+
+In onSaveInstanceState():
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.run {
+            putString("X", X.value.toString())
+            putString("Y", Y.value.toString())
+            putString("rotation", rotation.value.toString())
+            putString("scale", scale.value.toString())
+        }
+        super.onSaveInstanceState(outState)
+        Log.d(appName, "State saved")
+    }
+
+
+In onCreate() (This must be after you initialize the lateinits):
+
+	if (savedInstanceState != null) {
+            rotationInput.setText("rotation")
+            scaleInput.setText("scale")
+            pXInput.setText("X")
+            pYInput.setText("Y")
+            updateImage()
+        }
+        else{
+            updateImage()
+        }

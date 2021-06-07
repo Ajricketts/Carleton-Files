@@ -1,0 +1,202 @@
+** PLEASE NOTE:  IF YOU FAIL TO FOLLOW THESE INSTRUCTIONS PRECISELY **
+    **               YOUR SUBMISSION WILL RECEIVE A FINAL MARK OF ZERO. **
+
+    ┌─[ OVERVIEW ]───────────────────────────────────────────────────────┐
+    │                                                                    │
+    │ For this assignment you will create a program that uses looping    │
+    │ control structures to guide a computer-controlled agent along a    │
+    │ specific (but incredibly obvious) path through a simple maze, from │
+    │ a starting point on the top row to an ending point on the bottom.  │
+    │                                                                    │
+    │ The path will always be broken into nine sections known as 'legs'. │
+    │ The first 'leg' will start at the top and proceed down, the second │
+    │ will continue from there and proceed either left or right, etc.    │
+    │                                                                    │
+    │ Because each 'leg' will require you to move down, left, or right   │
+    │ a certain number of times, you will write a single looping control │
+    │ structure to handle each of the nine 'legs'. The specific details  │
+    │ about the control structures you must create for each 'leg' are    │
+    │ described in greater detail below.                                 │
+    │                                                                    │
+    │ Your first seven lines of your submission must be a completed      │
+    │ copy of the following header and it must be reproduced exactly.    │
+    │                                                                    │
+    │ Check cuLearn for a sample assignment header that you may copy.    │
+    │                                                                    │
+    │ # ============================================================     │
+    │ #                                                                  │
+    │ # Student Name (as it appears on cuLearn): ????? ?????             │
+    │ # Student ID (9 digits in angle brackets): <?????????>             │
+    │ # Course Code (for this current semester): COMP1405?               │
+    │ #                                                                  │
+    │ # ============================================================     │
+    │                                                                    │
+    │ Replace the questions marks in the sample with your name,          │
+    │ student ID, and the letter indicating the section of COMP1405      │
+    │ (i.e., A or B) in which you are enrolled. Please note that the     │
+    │ student number must be enclosed in the angle brackets. As a        │
+    │ clarifying example, if your name was Robert Collier, your          │
+    │ student ID was 123456789, and you were enrolled in section A,      │
+    │ then the first seven lines of your submission must be:             │
+    │                                                                    │
+    │ # ============================================================     │
+    │ #                                                                  │
+    │ # Student Name (as it appears on cuLearn): Robert Collier          │
+    │ # Student ID (9 digits in angle brackets): <123456789>             │
+    │ # Course Code (for this current semester): COMP1405A               │
+    │ #                                                                  │
+    │ # ============================================================     │
+    │                                                                    │
+    │ Your submission must also use a specific filename in order for it  │
+    │ to be located by the marking utility; your submission must have    │
+    │ filename 'comp1405_f17_#########_a5.py', with the number signs     │
+    │ replaced by your nine digit student number.                        │
+    │                                                                    │
+    └────────────────────────────────────────────────────────────────────┘
+
+    ┌─[ INSTRUCTIONS ]───────────────────────────────────────────────────┐
+    │                                                                    │
+    │  1. When you ran the generator it used your student number to      │
+    │ create the image of a somewhat obvious path through a standard     │
+    │ maze. This image was saved in a file called 'your-assigned-        │
+    │ maze.png'. Review this image carefully. For this submission you    │
+    │ will write a series of loops to guide a computer-controlled        │
+    │ 'agent' along this path.                                           │
+    │                                                                    │
+    │  2. Download the assignment template from cuLearn, place it in     │
+    │ the same folder as 'your-assigned-maze.png' and                    │
+    │ 'comp1405_f17_assistant_a5.py' (a file you extracted when you      │
+    │ extracted the generator). You must rename the assignment           │
+    │ template to 'comp1405_f17_#########_a5.py', replacing the          │
+    │ hashtags with your nine-digit student number. This file is the     │
+    │ only file you will submit for this assignment.                     │
+    │                                                                    │
+    │  3. The template for this assignment contains a header and one     │
+    │ essential line of code for importing functionality from the        │
+    │ comp1405_f17_assistant_a5 module. The template also contains       │
+    │ several function calls for moving the computer-controlled agent    │
+    │ - these calls are only there for demonstration purposes so you     │
+    │ must delete them as soon as you know what to expect when testing   │
+    │ your submission.                                                   │
+    │                                                                    │
+    │  4. Although you will use several different kinds of looping       │
+    │ control structure to complete this assignment, there are only      │
+    │ three functions you need to call to actually move through the      │
+    │ maze. None of these functions require arguments or produces        │
+    │ return values, and the functions themselves are named move_down,   │
+    │ move_right, and move_left respectively.                            │
+    │                                                                    │
+    │  5. Your path through the maze is broken into nine sections        │
+    │ called 'legs'. The first 'leg' will start at the top row and go    │
+    │ down. You must solve every 'leg' by using exactly one call to      │
+    │ move_down, move_right, or move_left inside the body of the         │
+    │ specific looping control structure assigned to that specific       │
+    │ leg. The first 'leg' will require moving your agent down, and      │
+    │ since a call to the move_down function will only move your agent   │
+    │ down one unit, if you want to move your agent down a 'leg' that    │
+    │ is five units in length then you will need to place your call to   │
+    │ the move_down function in the body of a looping control            │
+    │ structure that will repeat exactly five times. You must use a      │
+    │ looping control structure for each of the nine legs of your        │
+    │ assigned path.                                                     │
+    │                                                                    │
+    │  6. You also have access to the functions                          │
+    │ 'what_number_am_i_standing_on' and 'am_i_standing_on', to be       │
+    │ used for your event-controlled loops. The                          │
+    │ 'what_number_am_i_standing_on' function takes no arguments and     │
+    │ returns the integer digit of the grid location where the agent     │
+    │ is currently located, and the 'am_i_standing_on' function takes    │
+    │ a single integer argument and returns the Boolean value (True or   │
+    │ False) that corresponds to whether or not the agent is currently   │
+    │ standing on a grid location with the same number as the            │
+    │ argument.                                                          │
+    │                                                                    │
+    │  7. The first 'leg' of your path starts somewhere on the top row   │
+    │ and proceeds down. You must use exactly one a counter-controlled   │
+    │ 'for' loop using a call to the 'range' function to complete this   │
+    │ leg of your path.                                                  │
+    │                                                                    │
+    │  8. The second 'leg' of your path starts wherever the first leg    │
+    │ ends and proceeds to the right. You must use exactly one a         │
+    │ postcondition, event-controlled 'while' loop implemented with a    │
+    │ Boolean flag and using calls to the                                │
+    │ 'what_number_am_i_standing_on' function to complete this leg of    │
+    │ your path.                                                         │
+    │                                                                    │
+    │  9. The third 'leg' of your path starts wherever the second leg    │
+    │ ends and proceeds down. You must use exactly one a precondition,   │
+    │ event-controlled 'while' loop using calls to the                   │
+    │ 'what_number_am_i_standing_on' function to complete this leg of    │
+    │ your path.                                                         │
+    │                                                                    │
+    │ 10. The fourth 'leg' of your path starts wherever the third leg    │
+    │ ends and proceeds to the left. You must use exactly one a          │
+    │ postcondition, event-controlled 'while' loop implemented with a    │
+    │ Boolean flag and using calls to the 'am_i_standing_on' function    │
+    │ to complete this leg of your path.                                 │
+    │                                                                    │
+    │ 11. The fifth 'leg' of your path starts wherever the fourth leg    │
+    │ ends and proceeds down. You must use exactly one a counter-        │
+    │ controlled 'for' loop using a call to the 'range' function to      │
+    │ complete this leg of your path.                                    │
+    │                                                                    │
+    │ 12. The sixth 'leg' of your path starts wherever the fifth leg     │
+    │ ends and proceeds to the right. You must use exactly one a         │
+    │ postcondition, event-controlled 'while' loop implemented with a    │
+    │ 'break' statement and using calls to the 'am_i_standing_on'        │
+    │ function to complete this leg of your path.                        │
+    │                                                                    │
+    │ 13. The seventh 'leg' of your path starts wherever the sixth leg   │
+    │ ends and proceeds down. You must use exactly one a                 │
+    │ postcondition, event-controlled 'while' loop implemented with a    │
+    │ 'break' statement and using calls to the                           │
+    │ 'what_number_am_i_standing_on' function to complete this leg of    │
+    │ your path.                                                         │
+    │                                                                    │
+    │ 14. The eighth 'leg' of your path starts wherever the seventh      │
+    │ leg ends and proceeds to the left. You must use exactly one a      │
+    │ counter-controlled 'for' loop using a call to the 'range'          │
+    │ function to complete this leg of your path.                        │
+    │                                                                    │
+    │ 15. The ninth 'leg' of your path starts wherever the eighth leg    │
+    │ ends and proceeds down to the bottom row (and presumably           │
+    │ represents an escape from the maze). You must use exactly one a    │
+    │ precondition, event-controlled 'while' loop using calls to the     │
+    │ 'am_i_standing_on' function to complete this leg of your path.     │
+    │                                                                    │
+    │ 16. Do not use the input or print functions in your submission     │
+    │ for any reason. The only functions you are permitted in this       │
+    │ assignment are 'move_down', 'move_right', 'move_left', 'range',    │
+    │ 'what_number_am_i_standing_on', and 'am_i_standing_on'. If your    │
+    │ submission calls any other function you will receive a mark of     │
+    │ zero.                                                              │
+    │                                                                    │
+    │ 17. The only module you are allowed to import is already           │
+    │ imported for you (i.e., 'comp1405_f17_assistant_a5.py'). Do not    │
+    │ make any additional imports - if you do, then you will receive a   │
+    │ mark of zero.                                                      │
+    │                                                                    │
+    │ 18. When your program is running, do not change the focus away     │
+    │ from the pygame window (i.e., do not click on another window       │
+    │ while your program is running), as it can interfere with the       │
+    │ ability of pygame to redraw the window.                            │
+    │                                                                    │     
+    │ 19. You are expected to test your program thoroughly before        │
+    │ submitting. Given the simplicity of the maze, and the fact that    │
+    │ the comp1405_f17_assistant_a5 functionality will show you          │
+    │ exactly what you are doing (whenever you test your submission),    │
+    │ there is no reason for any student to make a submission that       │
+    │ fails to solve the assigned maze.                                  │
+    │                                                                    │
+    │ 20. If you wish to speed up the execution of your program, you     │
+    │ may hold down the space bar.                                       │
+    │                                                                    │
+    │ 21. To end this generator program, close the pygame window where   │
+    │ your maze is currently displayed.                                  │
+    │                                                                    │
+    └────────────────────────────────────────────────────────────────────┘
+
+
+    ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^
+    SCROLL UP TO THE OVERVIEW SECTION AND ENSURE YOU READ ALL INSTRUCTIONS
+    ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^

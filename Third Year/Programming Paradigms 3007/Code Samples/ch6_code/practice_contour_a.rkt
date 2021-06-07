@@ -1,0 +1,10 @@
+(define x 3)
+(define (assignEg)
+  (set! x (+ 1 1))
+  x)
+(define (bindEg)
+  (define x (+ 1 1))
+  x)
+(define a (assignEg))
+(define b (bindEg))
+

@@ -1,0 +1,145 @@
+** PLEASE NOTE:  IF YOU FAIL TO FOLLOW THESE INSTRUCTIONS PRECISELY **
+     **               YOUR SUBMISSION WILL RECEIVE A FINAL MARK OF ZERO. **
+
+     ┌─[ OVERVIEW ]───────────────────────────────────────────────────────┐
+     │                                                                    │
+     │ For this assignment you will create a program that takes a student │
+     │ number from the user (submitted as a command-line variable) and    │
+     │ uses that data as part of a longer process. Regardless of the      │
+     │ student number the user submits, the process that was assigned to  │
+     │ your student number will always eventually produce an uppercase    │
+     │ letter 'A' as its final result.                                    │
+     │                                                                    │
+     │ For this assignment you will be adding exactly three conditions    │
+     │ (i.e., logical expressions) to the assignment template that you    │
+     │ will download from cuLearn in order to 'sort' a collection of      │
+     │ falling shapes.                                                    │
+     │                                                                    │
+     │ Your first seven lines of your submission must be a completed      │
+     │ copy of the following header and it must be reproduced exactly.    │
+     │                                                                    │
+     │ Check cuLearn for a sample assignment header that you may copy.    │
+     │                                                                    │
+     │ # ============================================================     │
+     │ #                                                                  │
+     │ # Student Name (as it appears on cuLearn): ????? ?????             │
+     │ # Student ID (9 digits in angle brackets): <?????????>             │
+     │ # Course Code (for this current semester): COMP1405?               │
+     │ #                                                                  │
+     │ # ============================================================     │
+     │                                                                    │
+     │ Replace the questions marks in the sample with your name,          │
+     │ student ID, and the letter indicating the section of COMP1405      │
+     │ (i.e., A or B) in which you are enrolled. Please note that the     │
+     │ student number must be enclosed in the angle brackets. As a        │
+     │ clarifying example, if your name was Robert Collier, your          │
+     │ student ID was 123456789, and you were enrolled in section A,      │
+     │ then the first seven lines of your submission must be:             │
+     │                                                                    │
+     │ # ============================================================     │
+     │ #                                                                  │
+     │ # Student Name (as it appears on cuLearn): Robert Collier          │
+     │ # Student ID (9 digits in angle brackets): <123456789>             │
+     │ # Course Code (for this current semester): COMP1405A               │
+     │ #                                                                  │
+     │ # ============================================================     │
+     │                                                                    │
+     │ Your submission must also use a specific filename in order for it  │
+     │ to be located by the marking utility; your submission must have    │
+     │ filename 'comp1405_f17_#########_a3.py', with the number signs     │
+     │ replaced by your nine digit student number.                        │
+     │                                                                    │
+     │ *EXCEPT* FOR RENAMING THE ASSIGNMENT TEMPLATE, CHANGING THE HEADER │
+     │ INFORMATION TO YOUR OWN NAME, STUDENT ID, ETC. AND WRITING LOGICAL │
+     │ EXPRESSIONS FOR ALL OF THE VARIABLES IN 'decision_making_function' │
+     │ YOU _MUST_ _NOT_ CHANGE THE TEMPLATE OR ANY OTHER FILE IN ANY WAY! │
+     │                                                                    │
+     └────────────────────────────────────────────────────────────────────┘
+
+     ┌─[ INSTRUCTIONS ]───────────────────────────────────────────────────┐
+     │                                                                    │
+     │  1. When you ran the generator it used your student number to      │
+     │ create a file called 'your-assigned-entities.dat'. Once you have   │
+     │ downloaded the assignment template from cuLearn, place it in the   │
+     │ same folder as 'your-assigned-entities.dat' and                    │
+     │ 'comp1405_f17_assistant_a3.py' (a file you extracted when you      │
+     │ extracted the generator). You must rename the assignment           │
+     │ template to 'comp1405_f17_#########_a3.py', replacing the          │
+     │ hashtags with your nine-digit student number.                      │
+     │                                                                    │
+     │  2. You should test out the template by running it from the        │
+     │ terminal by typing 'python3 comp1405_f17_#########_a3.py'. If      │
+     │ you have done everything correctly you will see a window appear    │
+     │ where shapes are falling from the top of the screen and            │
+     │ disappearing when they get to the center.                          │
+     │                                                                    │
+     │  3. Each falling shape has certain properties (such as the         │
+     │ shape, the colour, and the numerical value) that you will be       │
+     │ able to test (once the shape reaches the center of the screen)     │
+     │ by calling one of the functions that has been provided. Each       │
+     │ falling shape might also be associated with a direction            │
+     │ (displayed as a yellow arrow under the falling shape).             │
+     │                                                                    │
+     │  4. Virtually all of the programming required for this             │
+     │ assignment has already been completed for you - your ONLY task     │
+     │ is to create the logical expressions that, once evaluated, will    │
+     │ be assigned to the variables condition_for_sending_down,           │
+     │ condition_for_sending_left, and condition_for_sending_right.       │
+     │                                                                    │
+     │  5. Each of the logical expressions you create will require that   │
+     │ you call some of your assigned functions and use the correct       │
+     │ logical operators (i.e., and, or, and not). As a clarifying        │
+     │ example, if you were assigned the function                         │
+     │ 'is_the_falling_shape_red', then you could set...                  │
+     │ condition_for_sending_left = is_the_falling_shape_red(e) ...and    │
+     │ then when you run the program, any falling shape that has the      │
+     │ colour red will be directed to the left.                           │
+     │                                                                    │
+     │  6. If a falling shape doesn't satisfy any of your three           │
+     │ conditions it will disappear when it reaches the center of the     │
+     │ screen. The shapes that do not have a yellow arrow underneath      │
+     │ them (to indicate their target direction) should be made to        │
+     │ disappear in this manner                                           │
+     │                                                                    │
+     │  7. Every time a falling shape is sent to its correct              │
+     │ destination by your conditions, you will receive two points.       │
+     │ Your score can be seen in the bottom right corner of the screen.   │
+     │ The maximum score that is possible will be 48 (if all your         │
+     │ shapes are each sent to their correct destinations), so if your    │
+     │ program is able to reach that score you will know you are          │
+     │ sorting your shapes correctly.                                     │
+     │                                                                    │
+     │  8. Please note that you can hold down the space bar to make the   │
+     │ shapes fall more quickly while you are testing your submission.    │
+     │                                                                    │
+     │  9. To solve this problem you will need to run the program first   │
+     │ and see what shapes you have been assigned (take notes!), then     │
+     │ try to deterine what combinations of features should be sent       │
+     │ left, right, etc. You might notice, for instance, that any shape   │
+     │ that is a red circle or a blue triangle should be directed left.   │
+     │                                                                    │
+     │ 10. Your conditions will not be trivial (i.e., they won't ever     │
+     │ just require a single call to one of your assigned functions)      │
+     │ but they should not be unneccessarily complex either.              │
+     │                                                                    │
+     │ 11. You may use the logical operators and, or, and not to          │
+     │ construct your conditions. You may also use any or all of the      │
+     │ following functions: evenly_divides_by(e, d),                      │
+     │ wrapped_in_a_circle(e), wrapped_in_a_square(e),                    │
+     │ wrapped_in_a_diamond(e), wrapped_in_a_cross(e),                    │
+     │ wrapped_in_a_triangle(e), wrapped_in_a_pentagon(e),                │
+     │ color_is_red(e), color_is_orange(e), color_is_green(e),            │
+     │ color_is_blue(e), color_is_purple(e), color_is_black(e)            │
+     │                                                                    │
+     │ 12. WARNING: The validator does not check what functions you are   │
+     │ using, and if you use a function you are not permitted you will    │
+     │ receive a mark of zero even if your program works perfectly.       │
+     │ YOUR MUST NOT USE ANY FUNCTION OTHER THAN THE ONES APPEARING IN    │
+     │ THE LIST ABOVE!                                                    │
+     │                                                                    │
+     └────────────────────────────────────────────────────────────────────┘
+
+
+     ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^
+     SCROLL UP TO THE OVERVIEW SECTION AND ENSURE YOU READ ALL INSTRUCTIONS
+     ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^  ^

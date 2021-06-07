@@ -1,0 +1,46 @@
+#include <stdio.h>
+int main() {
+  exec sql include sqlca;
+
+  exec sql begin declare section;
+         char sno[4];
+         char sname[20];
+         int  age;
+	 char *MYID = "oracle/oracle11g";
+  exec sql end declare section;
+
+  exec sql declare s_cursor cursor for
+         select *
+         from Student;
+
+  exec sql whenever sqlerror goto error;
+
+  exec sql whenever not found goto done;
+
+  exec sql connect :MYID;
+  printf("Connected to ORACLE\n");
+
+  exec sql open s_cursor;
+  printf("Cursor opened\n");
+
+  printf("S#    SNAME                        AGE \n");
+  printf("----- -------------------- ------------\n");
+
+  while(1) {
+    exec sql fetch s_cursor
+    into :sno, :sname, :age;
+    printf("%4s  %10s %11d\n", sno, sname, age);
+  }
+  done:
+  printf("----- -------------------- ------------\n");
+  exec sql close s_cursor;
+  exec sql commit release;
+  printf("Work is done successfully!\n");
+  exit(0);
+
+  error:
+  printf("SQL errors!\n");
+  exec sql rollback release;
+  exit(1);
+}
+

@@ -1,0 +1,37 @@
+COMP 1601 2021W Tutorial 9
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1a: The size of the red circle is defined in the ImageView in activity_main.xml on lines 11-12
+
+1b: The colour of the red circle is defined in the circle.xml file in the drawables foler on line 3. This is then refrecned by the ImageView on line 13
+
+1c: The no application title on the screens is defined in the themes.xml (day version) on line 16
+
+1d: It is defined in the AndroidManifest.xml on lines 12-18. More specifically, providing the filters Main and Launcher indicated that this should be the starting page of the app:
+
+	<activity android:name=".SplashScreen">
+	            <intent-filter>
+	                <action android:name="android.intent.action.MAIN" />
+
+	                <category android:name="android.intent.category.LAUNCHER" />
+	            </intent-filter>
+	        </activity>
+
+1e: This is set in SplashScreen.kt by setting the ContentView to be setContentView(R.layout.splashscreen). This happens on line 12.
+
+1f: Line 37 in splashscreen.xml tells the button to run the startMain function which in turn starts MainActivity. In fact, pressing anywhere on the screen will achieve this same funcitoinality due to line 6 in spashscreen.xml
+
+2: This is because in the themes.xml (night) the application title is not hidden like it is on the day version. Lines 15-16 from themes.xml are missing in themes.xml (night)
+
+3: The application sends and explicit intent in the startMain function in SplashScreen.kt and recieves an explicit intent when we specified an intent in Android Manifest on lines 12-18
+
+4: The application sends an implicit intent when we used Intent.ACTION_VIEW in MainActivity.kt in the openPage function. We recieved an implicit intent when we didnt specify an intent filter for MainActivity in AndroidManifest.xml
+
+5: The touch events MainActivity responds to is pressing down on the circle (ACTION_DOWN) lifting off the circle (ACTION_UP) and moving the circle (ACTION_MOVE). The code to handle these events is in MainActivity.kt in the trackCircle onTouchListener, more specifically on lines 43-53
+
+6: The rawX and rawY are used to get the absolute value relative to the screen not the current layout or widget. The constants are added to place the circle accurately where the user is pressing. When removed the circle is displaced off of where it is being touched. 
+
+7: Both ACTION_UP and ACTION_MOVE are not needed to acheieve the same funcitonality. ACTION_UP can be removed and ACTION_MOVE kept without any difference to the functionality of the app (minus one less log message). If ACTION_MOVE is removed but ACTION_UP is kept then the circle does not update as the user is dragging it around, only after they release it.

@@ -1,0 +1,31 @@
+COMP 1601 Tutorial 4
+AJ Ricketts
+101084146
+Sunday February 14th, 2021
+
+Question 1: After dragging, zooming, and rotating, once you select a different picture the position of the picture is not persistant and it returns to the default beginning position.
+
+
+Question 2: In order to add the image into the projects assests I had to go into the Assests.xcassests folder and then create a new image set (using the plus button in the bottom right) and naming it (in my case i named it "fish" as i imported a picture of fish). Finally I just had to drag the image into the 1x slot in that image set. To add a new button in the menu that switched the view to display the fish picture I simply added a button called "Fish" to the menu (under the button on line 29) and set the variable to my new image set that was created, I then reset the image:
+
+	- theImage = "fish"
+	  resetImage()
+
+
+Question 3: We can remove the Vstack and it works exactly as it did with the Vstack. This is due to the fact that Vstack is used to stack multiple views on top of each other vertically. Due to the fact that we only have a Menu in the Vstack, we can remove it without having any effect.
+
+
+Question 4: 
+
+	- moved: Moved is declared in ContenView because it needs to be set every time a picture is selected from the menu in order for the image to be placed in the proper location on the screen when first picked
+
+	- finalAmount: Final amount is declared in Contentview because it controls the scaling (is the original scale factor) and must be set every time a new photo is selected from the menu (this happens in ContentView). 
+
+	- angle: Again, the angle of the photo needs to be reset every time a photo is selcted from the menu, therefore the angle variable must be declared in ContentView.
+
+
+Question 5: The moved variable is needed because it is important for the tapReset function. When this function sets the moved variable to false, the position in the GeometryReader object gets set to CGPoint(x: g.size.width / 2, y: g.size.height / 2) which will place the image in the middle of the screen and make sure it is formatted properly. If you were only setting the position without the moved varibale, this would be more difficult and not as seamless with multiple different pictures (I think).
+
+Question 6: The purpose of resetState is to reset the position, and orientation of the photo when using the menu to select a different image. This function sets the picture back to a horizontal position in the middle of the screen and gets rid of any rotation that was applied (sets the angle back to 0 degrees).
+
+Question 7: I could not figure out question 7

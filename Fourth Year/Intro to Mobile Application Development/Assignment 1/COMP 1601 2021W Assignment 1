@@ -1,0 +1,136 @@
+COMP 1601 2021W Assignment 1
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1. To make it so just the result is displayed in bold (the number and the unit), first I converted the value "from" using the conversion function. This required a unwrapping as it was an optional. I used an if let statement for the conversion. After the value was converted I simply printed it out using Text() and the .bold() function, as well as using the convTo attribute stored in the dictionary. Therefore my code from ContentView:46 now looks like this:
+
+		- if let from = Double(fromString) {
+                if let from = conv.convert(from) {
+                    Text("\(from)").bold() + Text(" \(conv.convTo)").bold()
+                }
+            }
+        }
+
+        			- when it used to look like:
+
+        - if let from = Double(fromString) {
+        	Text(conv.formatConversion(from))
+        }
+
+
+2a. Because the forEach loop is no longer indexed like the for loop, I had to create my own counter to keep track of the list numbers. I then created a forEach loop that incremented this counter with each element in the list, and then printed that number along with the current item in the list. Instead of the for loop in lines 7-9, I now have:
+
+		- var count = 0 
+		  convAvail.forEach { item in
+        	count += 1
+        	print("\(count). \(item)")
+    	  } 
+
+
+2b. To change getConversion to follow function syntax from closure syntax I simply changed line 24 in main.swift from:
+
+		- let getConversion = {(_ choice: String) in
+
+					to
+		- func getConversion(_ choice: String) {
+
+
+2c. To remove the ! in line 23 I added a conditional and then created an else cluse that prints: "Using the given choice, the dictionary returned a nil value". Line 23 now reads:
+
+		- if let conv = conversions[choice] {
+
+with everything else under it (before the else I created) nested inside.
+
+
+2d. To make the program repeatedly request conversions and terminate when asked, it took a number of steps. First, I appended an "Exit" option to the convAvail array. This allowed me to not have to make changes to the getChoice() function. Next I created a flag that was initialized to true, and put all of the code at the bottom of the program (under getConversions) in a repeat while loop. Within the unwrapping of the conditional that would be returned form getChoice() (under the if let choice = getChoice() {....} line) I added another conditional that checked if choice equaled "Exit". If it did, the program would set the flag to flase and the program would terminate when it got to the while condition, if not, the program would continue. If the choice was not "Exit" the program still continues to the else clause and runs getConversoin(choide). Below is the code I added and where in the program I added it to:
+
+- First, the "Exit" option was appended to the convAvail array on line 4:
+
+		- convAvail.append("Exit")
+
+- Next, the flag was created as well as the repeat while loop and all of the other changes to the code that was under getConversions()
+
+		var flag = true
+		repeat {
+		    if let choice = getChoice() {
+		        if choice == "Exit" {
+		            flag = false
+		        }
+		        else {
+		            getConversion(choice)
+		        }
+		    } else {
+		        print("You didn't make a valid choice!")
+		    }
+		} while (flag)
+
+- Note: I also added a newline character when the conversion gets printed out to seperate the conversion from the new menu that pops up after (this was in getConversions)
+
+
+3a. To do this I just added another variable in the Converter stuct called convDefault that takes a double and initializing it.
+
+		- var convDefault: String
+		was added to the beginning of the converter struct
+
+		- self.convDefault = def
+		was added to the initializer
+
+		- init(_ from: String, _ to: String, _ f: @escaping (_ from: Double) -> Double?, _ def: String) {
+		intializer declaration was changed to
+
+		- all of the structs in the dictionary got a "0" attribute added to them for example:
+			"F to C": Converter("Farenheit", "Celsius",
+                         {F in return ((F - 32.0)*(5/9))}, "0")
+
+
+3b. Line 31 in ContentView was changed from fromString = "", to 
+
+            if let mode = convMode {
+                let conv = conversions[mode]!
+                fromString = conv.convDefault
+
+- This was to be able to pull the default value from the desired conversions struct. I had to unwrap the convMode optional in order to get the correct struct, then set fromString to that specific conversions default value
+
+
+3c. First I created a seperate view to print the message in italics, I called this view ConvMessage. I then added a condition, under where the conversion is printed out (i.e. under the block of code where fromString is converted to a double and then used to do the conversion and print). This condition checked whether fromString was equal to the current default value, if it was, then there would be an instance of ConvMessage(). I also used Spacer() in a couple places in order to fix the spacing and make it look better (under the Textfield) as well as before the instance of ConvMessage()). The code in the body of ConvOutput now looks like:
+
+	{
+        if let mode = convMode {
+            let conv = conversions[mode]!
+            TextField("Enter \(conv.convFrom)", text: $fromString)
+            Spacer()
+            if let from = Double(fromString) {
+                if let from = conv.convert(from) {
+                    Text("\(from)").bold() + Text(" \(conv.convTo)").bold()
+                }
+            }
+            if (fromString == conv.convDefault) {
+                Spacer()
+                ConvMessage()
+            }
+            
+        } else {
+            Text("Please select a conversion")
+            Text("type from the menu above.")
+        }
+    }
+
+- The code for the ConvMessage view is:
+
+struct ConvMessage: View {
+    var body: some View {
+        Text("Please enter your own number to convert.").italic()
+    }
+}
+
+
+3d. The above message dissapears instantly when a new number is entered (or even when the default value gets deleted) due to the fact that I checked if the current value in the Textfield was equal to the default value. Because of this, any value that is not the default value (even an empty string) will cause the message to dissapear. The new view has to be run almost at the same time as the conversion is printed out (basically how I coded it earlier, see above ^).
+
+
+Outside Sources Used:
+
+https://stackoverflow.com/questions/24002733/add-an-element-to-an-array-in-swift
+https://www.programiz.com/swift-programming/repeat-while-loop
+https://www.donnywals.com/choosing-between-a-for-loop-and-a-foreach/

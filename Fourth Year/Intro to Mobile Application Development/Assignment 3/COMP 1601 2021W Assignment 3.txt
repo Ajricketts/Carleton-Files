@@ -1,0 +1,149 @@
+COMP 1601 2021W Assignment 3
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1: To add debug messages I added calls to log in all of the activity lifecycle functions: onCreate(), onDestroy(), onResume(), onPause(), onStart(), onStop(), onRestart(). For Example:
+	    override fun onRestart() {
+        super.onRestart()
+        Log.d("Converter2A", "Restarted")
+    }
+
+2: To add a farenheit to kelvin converter I added another entry in the converter map and used the formula (F - 32.0) * 5.0/9.0 + 273.15 for the conversion. I then checked if this value was negative and returned null if if it was. This addition looked like:
+
+	"F to K" to Converter("Farenheit", "Kelvin",
+	            fun (F: Double): Double? {
+	                val kel = (F - 32.0) * 5.0/9.0 + 273.15
+	                if (kel > 0) {
+	                    return kel
+	                }
+	                else return null
+	            }),
+
+Giving the app -500 to convert results in the message "Converting -500.0 Farenheiht to Kelvin failed". This is because the variable kel above ^ would be negative when trying to complete the conversion which would lead to null being returned. Because null is returned this gets passed to the formatConversion function and when checked, outputs the message we recieved when it detects a null value. This happens specifically on lines 11-15.
+
+3: To add a cars to cows entry to the menu I once again made another key-value pair in the map but instead of a converter object I just set the value to null:
+
+	"cars to cows" to null
+
+4: This happens because the conv variable that stores a converter nullable type (either a converter object or null) only gets updated if the c variable (conversions[convName]) does not equal null. Because it equals null with cars to cows the watcher still uses the old conversion as that is the current one (as it didnt get updated because the c variable is null). This is why the "Invalid Menu Selection" text appears (because this is in the else clause that will be reached due to the null) but the conversion continues to stay as the previous one. To make it so the input field is only visible with a valid conversion i simply moved the fromStringW.setVisibility(View.VISIBLE) from line 44 in onMenuItemClick to inside the if statement on line 36 at the end and then added fromStringW.setVisibility(View.INVISIBLE) to the else statement at the end
+
+5: This is because the Textview is pushing the menu off of the screen. The Textview has this effect because its width and height are hard coded in and not in relation to the other elements. This can be seen specifically in the activity_main.xml file in the lines (37 and 38):
+
+        android:layout_width="418dp"
+        android:layout_height="341dp"
+
+
+6: To fix the layout with a Linear Layout I added a Vertical Linear Layout right above the Conversion button element in activity_main.xml. I then indented the remaining code (the button, EditText element and Textview) to be inside of this Linear Layout. I also made sure the elements were in the wrong order as they got messed up when using android studio to add a Vertical Linear Layout instead of coding it in myself. This looks like (a snipet not all of the code):
+
+<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/convMenu"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="showMenu"
+            android:text="Conversions Menu"
+
+            .
+            .
+            .
+            .
+            .
+
+            />
+
+7: To fix this issue with a constrained layout you simply had to change the existing code in the Textview section of activity_main.xml. The layout_width and layout_height had to be changed to wrap_content instead of specific sizes. Lines 37 and 38 needed to be changed to :
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+8: To get the desired functionality it took a decent amount of additions to the exsisting code. First I needed to create a new variable called menuSelect to store the key for the current conversion. I then changed onMenuItemClick to store the conversions key in this variable every time the user selected or changed conversions. Next the state was saved in onSaveInstanceState() by saving the text in the EditText element by using the fromStringW variable as well as saving the menuSelect variable to ensure I had stored both of what the user typed as well as what conversion they were on. Finally in the onCreate() I restored both the state of the menu selection as well as what the user typed in for the conversion. I then created new fromW (the string the user typed converted into a Double?, this used the fromStringW that I resotred) and c variables (this used the restored menu selection to create a new converter object). These values were then checked if they were null, if they were not they were set and displayed to the user and if they were it was cought and handled. There were also additional calls to Log in order to ensure the state was being saved along the way.
+
+The additional variable initialized at the beginning of the app:
+
+	private var menuSelect: String = ""
+
+
+The changes to onMenuItemClick:
+
+	 val convName = choice.getTitle()
+    menuSelect = convName.toString()
+    val c = conversions[menuSelect]
+    Log.d("Converter2A Menu Click", menuSelect)
+
+
+The changes to on onSaveInstanceState():
+
+	    override fun onSaveInstanceState(outState: Bundle) {
+	        Log.d("Converter2A State save", menuSelect)
+
+	        outState.run {
+	            putString("fromStringW", fromStringW.text.toString())
+	            putString("menuSelect", menuSelect)
+	        }
+	        super.onSaveInstanceState(outState)
+
+	        Log.d("TapDemo", "State saved")
+	    }
+
+
+The changes to onCreate():
+
+   override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        Log.d("Converter2A", "Created")
+
+        menuButton = findViewById(R.id.convMenu)
+        fromStringW = findViewById(R.id.fromString)
+        result = findViewById(R.id.result)
+
+        if (savedInstanceState != null) {
+            with(savedInstanceState) {
+
+                fromStringW.setText(getString("fromStringW"))
+                menuSelect = getString("menuSelect").toString()
+                val c = conversions[getString("menuSelect")]
+                Log.d("Converter2A Restore", menuSelect)
+                var from = fromStringW.text.toString().toDoubleOrNull()
+
+                if (from != null) {
+                    if (c != null) {
+                        conv = c
+                        result.setText(c.formatConversion(from))
+                    }
+
+                    else {
+                        result.setText("Invalid menu selection")
+                    }
+                }
+
+                else {
+                    result.setText("Please enter a number to convert.")
+                }
+
+                fromStringW.setVisibility(View.VISIBLE)
+                Log.d("TapDemo", "State restored")
+            }
+        }
+
+        else {
+            fromStringW.setVisibility(View.INVISIBLE)
+        }
+
+        fromStringW.addTextChangedListener(watcher)
+
+    }
+
+
+
+
+

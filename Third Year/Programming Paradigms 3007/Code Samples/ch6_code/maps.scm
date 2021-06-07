@@ -1,0 +1,7 @@
+(define (my-map f L)
+  (if (null? L) '()
+      (cons (f (car L)) (my-map f (cdr L)))))
+(define (main L)
+  (define f (lambda(x)(* x L)))
+  (my-map f '(1 2 3)))
+(define result (main 100))

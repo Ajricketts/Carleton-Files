@@ -1,0 +1,39 @@
+#| Alyxander-Jacob Ricketts
+   101084146
+|#
+
+(define (make-map values)
+  (define (append list1 list2)
+    (if (null? list1)
+        list2
+        (cons (car list1)
+              (append (cdr list1) list2))))
+
+  (define (equal-keys? L key)
+    (cond ((null? L) #f)
+          ((null? key) #f
+              (if (null? (caar L)) #f
+                 (if (list? (car L))
+                     (if (eq? (caar L) key) #t)
+
+                     (if (eq? (car L) key) #t
+                             (equal-keys? (cdr L))))))))
+
+  (define (put! k v)
+    (if (null? values)
+        (append (cons k v) '())
+        (append values (cons (cons k v) '()))))
+
+  (define (dispatch method)
+    (cond ((eq? method 'put!) put!)
+          ((eq? method 'equal-keys?) equal-keys?)
+          (else (lambda() (display "Unknown Request: ")
+                          (display method)(newline)))))
+dispatch)
+
+  
+
+(define map(make-map '((a . 1)(b . 2))))
+(define new (cons "c" 3))
+((map 'put!) "c" 3)
+((map 'equal-keys?) '((a . 1)(b . 2)("c" . 3)) "f") 

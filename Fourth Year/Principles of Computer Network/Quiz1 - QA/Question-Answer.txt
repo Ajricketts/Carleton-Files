@@ -1,0 +1,136 @@
+1) In the selective reject ARQ protocol SREJ
+
+the receiver may reject a packet sent by the sender
+
+2) In the Stop-and-Wait protocol
+
+the sender must stop and wait after sending a packet
+
+3) The receiver in a  Go-Back-N sliding window with N=200 uses SREJ and keeps all rejected packets in its buffer. Assume the sender has sent 180 packets. However, the channel is noisy and a received packet has probability 1/20 to be rejected. How many ``rejected'' packets will be added to the receiver's buffer in expectation? 
+
+9
+
+4) An adversary is cutting wires (links) to disconnect the nodes of the network
+
+IMAGE1
+
+depicted above. When a wire is cut its adjacent nodes are not affected. What is the minimum number of links required to be cut so as to partition the network into two connected subnets of size $4$ nodes each? 
+
+5) The bandwidth of a channel is 200 Mbps.What is the transmission delay (in seconds) for a 10 Kb packet?
+
+(1/2) 10^{-4}
+
+6) How many bits can a transcontinental channel hold if it has one-way latency of 100 ms and bandwidth of 40 Mbps? Express your answer in Mb
+
+4
+
+7) What is the propagation delay on a 6 km long coaxial cable having speed 3 10^8 m /s?
+
+2 10^{-5} 
+
+8) What's the max number of errors that the n \times n LRC (Longitudinal Redundancy Check) code can detect?
+
+Two
+
+9) What's the max number of errors that the LRC (Longitudinal Redundancy Check) code can correct? 
+
+One
+
+10) In the CRC code a polynomial is converted to a bit sequence. To what bit sequence is the polynomial x^7 + x^5 + x^2 + x + 1 converted to? 
+
+1 0 1 0 0 1 1 1
+
+11) The result of multiplying in mod 2 arithmetic the two polynomials P(x)  =  3x + 5 and Q(x)  =  4x^3 + 3x - 2 is equal to
+
+x^2+x
+
+12) What is the redundancy of the 2 dimensional parity check algorithm on bit words of length m n as a function of m and n?
+
+1 + 1/m + 1/n
+
+13) Assume n is an integer greater or equal to 1. What is the Hamming Distance between the strings
+
+(01)^n (this is 01 repeated n times)
+
+and
+
+(10)^n (this is 10 repeated n times)?
+
+2n
+
+14) Consider two bit strings x and y of length n each. Assume their Hamming distance is equal to H. Form new bit strings x' and y' as follows. For each i insert after the i-th bit of x the string 101 and for each i insert after the i-th bit of y the string 001. Let x' and y' be the resulting stings. What is the Hamming distance between x' and y'?
+
+H+n
+
+15) Consider a line graph of five nodes. What is the average hop-distance between pairs of nodes?
+
+2
+
+16) A source generates messages consisting of n bits. What is the fraction of the messages which have exactly k occurrences of the bit 1 (the other bits are 0) .
+
+{n \choose k} 2^{-n}
+
+17) Consider the two-queue system below. Packets arrive at either of the two entry modes i=1,2 at the bottom with arrival rates a_i (t) in time slot t, forwarded to respective servers and from there go to a receiver.
+
+IMAGE2
+
+Due to faults packets reach server i with probability p_i, for i=1,2. What is the expected number of packets reaching the Receiver in time slot t?
+
+p_1 a_1 (t) + p_2 a_2 (t)
+
+18) Consider the material on queues discussed in class and recall that we have shown that the probability dinners overlap is 7/16. You observe a particular person.  What is the likelihood of seeing this person at dinner exactly 4 times in 10 days, assuming that their arrival times are in fact random. 
+
+{10 \choose 4} (7/16)^4 (9/16)^6
+
+19) Consider Little's law and assume that in a single input/output queue the rate of arrival is A and the rate of departure is D packets per second. Which of the following assertions is correct?
+
+If A > D there is buffer overflow
+
+20) Consider a network of k servers S_1 , S_2 , ..., S_k in tandem. 
+
+IMAGE3
+
+When server S_i sends a packet to the next server S_{i+1} it adds a header of length H bits. Assume a packet of L bits enters the network from S_1. A new packet exits from S_k. What is the smallest number k (expressed as a function of L, H) of servers so that the resulting packet has length at least 2 L. (Assume all servers forward a packet they receive from a server on the left to a server on the right .)
+
+at least  \leftceiling L/H \rightceiling
+
+21) Assume all logarithms are in base 2. A transmission line has bandwidth 1,200 Hz and signal to noise ratio 15. The (Shannon) capacity of the channel is
+
+4,800
+
+22) Why is frequent bit alternation important in physical layer bit streams?
+
+To prevent baseline wander.
+
+23) What is the period of a signal with frequency 0.05?
+
+20
+
+24) The lowest frequency of a signal is 2,200 Hz and the highest 7,800 Hz. What is the bandwidth?
+
+5,600 Hz
+
+25) A sinusoid wave is given as a function w(t) of time t by the formula: w(t) = 6 sin ( \pi/4 + 40 \pi t). What is the frequency, phase, and amplitude in this order?
+
+frequency 20, phase \pi/4, and amplitude 6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

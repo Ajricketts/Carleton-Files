@@ -1,0 +1,69 @@
+COMP 1601 2021W Tutorial 6
+Name: AJ Ricketts
+Student ID: 101084146
+
+Collaborators:
+
+1: The Converter class in both kotlin and swift are very similar. They both have a convert variable that is an optional (nullable in kotlin) type, both include a formatConversion function for string interporlation and both use a key-value pair collection. The conversions dictionary (in swift) and map (in kotlin) are very similar as well, the only key differences that I saw was that dictionaries use a colon to seperate their key-value pairs while maps use the keyword 'to'. In addition the dictionary was explicit in terms of the types that would be stored in it and the map was implicit. To me it seems as if the languages have many key similarities with slight variations and their own way of doing things.
+
+
+2: The flow of control of mainActivity is first the onCreate runs on startup which creates the view, then when the button for Conversions Menu is clicked the menu is created. Finally after the user selects a menu item the watcher is called and listens for the text to be changed. This is very different than the control flow of swift as contentview simply calls the two functions convMenu and convOutput and leaves the rest up to them.
+
+
+3: 
+- result is used to store and display the result to the user 
+- menuButton actually isnt used and can be removed with no effect to the functionallity
+- fromStringW takes the string that the user writes and stores it in order to convert the value
+- conv stores the converter map
+
+4: Adding a miles to kilometers converter was just as simple as adding it to Converter2, I simply added another key-value pair to the converstions map in the Converter class:
+
+	val conversions = mapOf(
+        "F to C" to Converter("Farenheit", "Celsius",
+            {F ->  ((F - 32.0)*(5/9))}),
+        "C to F" to Converter("Celsius","Farenheit",
+            {((9/5)*it + 32.0)}),
+        "km to mi" to Converter("kilometers", "miles",
+            fun (k: Double): Double? {
+                val m = k * 0.6213712
+                return m
+            }),
+        "inch to cm" to Converter("inches", "centimeters", ::InToCM),
+        "m to km" to Converter("miles", "kilometers",
+            fun (m: Double): Double? {
+                val k = m * 1.62313712
+                return k
+            })
+	)
+
+
+5: To make the message on line on line 38 display until something is type I siply swaped line 38 and line 37. This is because the assignment on line 37 would update the watcher as soon as a menu item was selected. Therefore the if statement now looks like:
+
+	if (c != null) {
+	            conv = c
+	            fromStringW.setText("")
+	            result.text = "You picked $convName"
+    }
+
+
+6: For adding another menu to the bottom of the screen i copied the button code for convMenu and put it under the result code in the main activity xml, i then added a constraint from the top to the bottom of the result view:
+
+    <Button
+        android:id="@+id/convMenu2"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showMenu"
+        android:text="@string/conversions_menu"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/fromString"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/result"
+        app:layout_constraintVertical_bias="0.307" />
+
+- Although I am sure there is a better way of doing this I could not figure it out. The result view (and therefore the text also) also moves up slightly the first time something is selected in the menu and I was unsure of how to resolve it. Because of this I found it harder to add another menu to the bottom of the screen in kotlin then in swiftui. 
+

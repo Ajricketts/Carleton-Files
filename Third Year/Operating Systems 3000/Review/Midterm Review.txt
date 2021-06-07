@@ -1,0 +1,200 @@
+Carleton University Comp 3000A
+Midterm Study Guide
+Tuesday October 15th, 2019
+
+Enviroment Variables (Come back to later)
+------------------------
+
+- Enviroment Variables are variable value pairs that are shared between processes that define important context-related information (such as the name of the current user, the current language, the timezone, etc) for applications. 
+
+	* ENV's are either internal (private to that specific shell process) 		or external (available to other processes).
+
+	* To create an external ENV you can type: export X="Important Data" 	for example.
+
+- ENV's are stored towards the top of the stack (or above the stack), for 	example:  
+
+	*argv holds 0x7ffed51e5478
+	 argv[0] holds 0x7ffed51e743b
+	 env holds 0x7ffed51e5488
+	 env[0] holds 0x7ffed51e7446
+
+
+
+The Wait Function
+------------------------
+
+- The wait function waits when there is a child process to wait for.
+
+	* In other words, when there was a fork() system call and the wait 	 		  function does not return an error (-1, this means that there was an 		  error and a child function was not created)
+
+- The wait function does not wait either when, a chiild function was not  	created, or the child function has completed its task (has returned nothing to the parent). 
+
+- The wait function is important and should be used because performing a
+  wait allows the system to release the resources associated with the
+  child; if a wait is not performed, then the terminated child remains 
+  in a "zombie state".
+
+
+I/O Redirection
+------------------------
+
+- Input/output redirection is done by either creating, or opening a file   	 and setting the file descriptor to the appropriate file descriptor (0    
+  for standard input, 1 for standard output and 2 for standard error). 	
+  This can be done with a call to dup2(). For example in the 3000shell 
+  code: 
+
+	  		if (stdout_fn != NULL) {
+
+                        fd = creat(stdout_fn, 0666);
+                        dup2(fd, 1);
+                        close(fd);
+
+            }
+
+
+  Or with a call to freopen, for example: freopen("newin", "r", stdin);
+
+
+
+System Calls Versus Library Calls (open, opendir, etc)
+-----------------------------------------------------------
+
+-  Sometimes when you call certain system calls, the kernel will use other
+   system calls instead, for example when you use open, or creat, you will actually get openat when you use strace, or when you call printf with no string, the kernel will generate a puts call.
+
+-  Other examples are opendir (which will also give you a openat system call, with a directory option), or readdir (which would actually give you a getdents64 system  
+   call (which you actually cant call at the C level))
+
+- By definition: A library function is linked to the user program and executes in user space while a system call is not linked to a user program and executes in kernel space.
+
+
+TTY's and stdin/out/error, proc/<PID>/fd
+---------------------------------------------
+
+-  TTY refrences the old teletypewriters, today in linux, tty is a legacy name used to refer to the user interface for text-based input and 	 
+   output, otherwise known as a "terminal". 
+
+- stdin/out/error are on file descriptors 0, 1 and 2 on your terminal. 	 
+  Stdin, out, error are open on ttys by default. These file descriptors 
+  can be seen by going into the file descriptor "folder" of your current 
+  shell process and displaying the contents:
+
+
+	* student@COMPXXXX:~/Desktop/Comp-3000-Midterm-Review$ cd /proc/14944/
+	  fd
+	  student@COMPXXXX:/proc/14944/fd$ ls -la
+	  total 0
+	  dr-x------ 2 student student  0 Oct 15 19:17 .
+	  dr-xr-xr-x 9 student student  0 Oct 15 19:17 ..
+	  lrwx------ 1 student student 64 Oct 15 19:17 0 -> /dev/pts/1
+	  lrwx------ 1 student student 64 Oct 15 19:17 1 -> /dev/pts/1
+	  lrwx------ 1 student student 64 Oct 15 19:17 2 -> /dev/pts/1
+	  lrwx------ 1 student student 64 Oct 15 20:41 255 -> /dev/pts/1
+
+
+
+Signal Handlers
+-----------------------------
+
+- A signal is a software interrupt, a way to communicate information to a process about the state of other processes, the operating system, and  
+  hardware. A signal is an interrupt in the sense that it can change the 
+  flow of the program —when a signal is delivered to a process, the 	
+  process will stop what its doing, either handle or ignore the signal, or 	 in some cases terminate, depending on the signal. 
+
+- To create your own signal handler, you must first create a function that 
+  will recieve certain signals and then proceed with certain instructions 
+  based on that signal. That function then must be passed to the signal() 
+  function, or as a pointer to the sigaction fucntion as seen in the 
+  3000shell code: 
+
+
+		memset (&signal_handler_struct, 0, sizeof(signal_handler_struct));
+
+        signal_handler_struct.sa_handler = signal_handler;
+        signal_handler_struct.sa_flags = SA_RESTART;
+        
+        if (sigaction(SIGCHLD, &signal_handler_struct, NULL)) {
+                fprintf(stderr, "Couldn't register SIGCHLD handler.\n");
+        }
+        
+        if (sigaction(SIGHUP, &signal_handler_struct, NULL)) {
+                fprintf(stderr, "Couldn't register SIGHUP handler.\n");
+        }
+
+
+	* Setting signal_handler_struct.sa_handler to signal_handler allows 	the signal_handler() function (that we created) to be called when 	
+	using sigaction, with the first paramater in sigation as the signal to 
+	be passed to signal_handler().
+
+- Signals are called either when their is an error (KILL, SEGV), or by 	  
+  functions (SIGCHLD)
+
+
+Hard Links versus Symbolic Links
+-----------------------------------
+
+- Hard links between files can be achieved by using the ln command. When using a hard link a "new file" is created that uses the same inode as the original for its metadata, therefore, all changes made to one file will affect the other. Because this link is using the inode, the original file can be renamed and this will not effect the link.
+
+-Symbolic links between files can be achieved by using the ln command with the -s option. This link is not the same as a hard link as it is basically a shortcut to the original file. Therefore when the original file name is changed the link is now broken.
+
+
+
+Inodes
+----------------
+
+- The inode of a file has all of the files metadata. This includes data, permisions, and file times. 
+
+	* The file times include atime (accessed time), mtime (Last modified time), and ctime(Last status change time). The mtime and ctime will normally be the same and change together (unless permisions on the file are changed then only the ctime is changed).
+
+- permisions are assigned per group (user, group, or other). rwx = read write execute
+
+
+Object Files versus Executable Files
+----------------------------------------
+
+- The object file is the file output by the compiler, this file usually contains the source code converted to a machine language. Even though this code is in machine language, it is not in a machine understandable or directly executable form.
+
+- Executable files are the final output, which can be understood by the machine. 
+
+
+
+
+cd and Working Directory
+-------------------------------
+
+- cd is a command shell builtin. The purpose of cd is to change the current directory you are working in. cd is accomplished by using a chdir() system call. 
+
+- Working directories are independant, meaning you cannot change the working directories of other processes. 
+
+
+
+
+Where local vars, funciton arguments, global vars, stack, heap, environment/command line args are all in a process's memory relative to each other
+---------------------------------------------------------------------------
+
+- When looking at the output from the 3000memview.c program from tutorial 3:
+
+	The stack seems to be where the argument and enviroment variables are, for example:
+
+	argv:      7ffc679c0a98
+	argv[0]:   7ffc679c2429
+	envp:      7ffc679c0aa8
+
+	The heap seems to be where buf is, this can be inferred as that is where a malloc 
+	call is, for example:
+
+	 buf[0]:    55c5f0db8670
+
+	The code would be around where the main memory value is, for example:
+
+	main:      55c5efa6a7ba
+
+	Global variables would seem to start around: gmsg:      55c5efa6ab20, as there are few global variables in this program we can assume it starts in and around this area
+
+
+- Enviroment variables and command line arguments would be above the stack but we can assume that the stack begins right below those.
+
+
+
+
+

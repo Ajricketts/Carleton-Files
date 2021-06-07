@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>COMP 2406</title>
+<link href="template.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<p class="header">COMP 2406 - Winter 2019</p>
+<p class="header subheader">Tut 07: RESTful API's and Express.js</p>
+<p>&copy;<span style="font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255)"> </span>L.D. Nel 2019</p>
+<hr />
+<p class="red">Revisions will be noted here. </p>
+<p class="red">&nbsp;</p>
+<hr>
+<p class="segment-header">Description:</p>
+<p>With this tutorial we introduce using RESTful API servers, or services. Many servers now provide an API that lets you query them for data. They provide JSON or XML data rather than providing  a webpage as a response. This is because many clients now have javascript that asynchronously updates page contents and thus query servers through their API (application programming interface) expecting JSON data rather than a new html web page to load.</p>
+<p>This tutorial is based on work done by Muhammad Awais Qureshi as part of TA'ing COMP 2406 and his 4905 honours project. Thanks Muhammad!</p>
+<p>This tutorial has two parts. In part I we build a thin-client with just node.js and it's built in modules. In part II we build a thick-client using the express.js framework. An important point is to compare the two different styles. Both the style of a thick vs. thin client and the style of an express.js app compared to the conventional node.js apps you have been building so far in the course.</p>
+<p class="red">IMPORTANT: To do this tutorial you will need to sign up for both an openweather.org API key and a food2fork API key. These keys can take up to an hour or more to activate so you need to do this well in advance of attempting the tutorial.</p>
+<p class="red">You can sign up for an openweather.org API key at: <a href="http://openweathermap.org/appid">http://openweathermap.org/appid</a></p>
+<p class="red">You can sign up for a food2fork API key at <a href="http://www.food2fork.com">www.food2fork.com</a> . </p>
+<p class="red">These API keys will have to be pasted into your code in order to connect with their API server.</p>
+<p class="red">IMPORTANT: This tutorial is meant to be started as a homework assignment and for you to demonstrate your results at your tutorial session. You will not be able to complete it if you only start when you come to the tutorial.</p>
+<p>To get credit for the tutorial you must complete, or make significant progress on, the exercise problems provided and demonstrate your results to the tutorial TA before you leave the tutorial.<br />
+</p>
+<hr/>
+<p class="segment-header">Part I: Node.js-based Thin Client:</p>
+<p class="segment-header">&nbsp;</p>
+<p><span class="red">The demo code will not work until you insert your own API_KEY in server code.</span><span class="red">You can sign up for an openweather.org API key at: <a href="https://openweathermap.org/appid">https://openweathermap.org/appid</a></span></p>
+<p>Here is what it looked like when I signed up to write this tutorial:</p>
+<p><img src="images/openweatherAPIkey.png" width="1066" height="571" alt=""/></p>
+<p>&nbsp;</p>
+<p>Open the  the   <span class="code">demo_code_nodejs_thin_client</span> folder  and run the  server  <span class="code">server.js</span> found there. To test the server open a browser to <span class="code">http://localhost:3000.</span> You should see a browser application that looks like the following. <span class="red">(The demo code will not work until you insert your own API_KEY in server code.)</span></p>
+<p>&nbsp;</p>
+<p><img src="images/demo1.png"  alt="demo1" /></p>
+<p>&nbsp;</p>
+<p>Type &quot;Ottawa&quot; into the textfield and click the <span class="black-bold">Get Weather</span> button. You should see the current weather conditions for Ottawa as a result. (Go ahead and try other cities as well.)</p>
+<p>&nbsp;</p>
+<p><img src="images/demo2.png" alt="ottawa weather"></p>
+<p>&nbsp;</p>
+<p>Open the server  <span class="code">server.js</span> code in your favourite code editor and examine the code.</p>
+<p>Observe the following:</p>
+<p>1) The code uses, or requires, the <span class="code">querystring</span> built-in node module to help parse the query parameters in the POST request.</p>
+<p>2) The server code makes an HTTP GET request to another server hosted by api.openweathermap.org. This is done in the following function:</p>
+<pre>
+function getWeather(city, res){
+
+//As of 2015: you need to provide an appid with your request.
+//Many API services now require that clients register for an app id.
+
+//Make an HTTP GET request to the openweathermap API
+  let options = {
+    host: 'api.openweathermap.org',
+    path: '/data/2.5/weather?q=' + city + 
+	'&appid=' + API_KEY
+  }
+  http.request(options, function(apiResponse){
+    parseWeather(apiResponse, res)
+  }).end()
+}
+</pre>
+<p>Notice this function accesses another server on the internet through its (RESTful) API. (Don't worry about what &quot;RESTful&quot; means at this point.). Notice also that the code is required to provide an app ID key. Many API's have sprung up over recent years and starting around 2015 most now require that you sign up and use an app id key they provide when accessing their services. Some of the free keys limit the amount of access you have to their API service.</p>
+<p>Notice this function does a http (GET) request to the weather server and then provides its own client with the JSON data that the weather API server returns.</p>
+<p>Study the entire code for  our weather server and then proceed with the tutorial problems 1 and 2.</p>
+<p>&nbsp;</p>
+<p class="segment-header">Problem 1)</p>
+<p>Notice our demo code implements a <span class="black-bold">thin client</span>. That is, the client is expecting the server to render the html pages. Further notice the server serves HTML content to the browser, not by reading a file but, by constructing an html web page that consists of html tags merged with the data obtained from the weather service. This idea of combining html with data is called &quot;template rendering&quot; and there are &quot;template engines&quot; like <span class="black-bold">Handlebars</span>, <span class="black-bold">PUG</span> etc. made to help with this. We won't concern ouselves with those here though -we will look at them later in the course.</p>
+<p>Notice that the server effectively serves an html <span class="black-bold">form</span> to the client which is set up to send an HTTP POST request when the user clicks the <span class="black-bold">Get Weather</span> button, or hits the ENTER key. </p>
+<p>Also notice the form data is made accessible as a javascript object by using the <span class="code">querystring</span> module to parse the query data.</p>
+<p>For this problem we want to allow the user to use a GET request as well by, for example, accessing <span class="code">http://localhost:3000/?city=Ottawa</span> using the browser address bar. This should provide the server response as before but with the weather data for Ottawa included:</p>
+<p><img src="images/problem1.png" width="1233" height="417"></p>
+<p>To do this you need to add a new <span class="black-bold">route</span> (if-statement) in the server that detects a GET request and then uses the querystring module to parse the data to obtain the city. Use the existing code for clues on how to do this. Read up on how to use the querystring module if necessary. Basically the querystring module's parse method turns the query parameters (items specified with the <span class="code">?city=Ottawa</span> syntax in a URL) into a javascript object that lets you  access the parameters with syntax like <span class="code">object.city</span> for example. </p>
+<p>With this completed you can query the weather by either typing a city name in the text field or by using the browser address bar directly. </p>
+<p>&nbsp;</p>
+<p class="segment-header">Problem 2)</p>
+<p>For this problem we want you to display the city name as part of the &quot;Weather Info&quot; heading in the web page. That is, in the<span class="code"> sendResponse()</span> function of the server we want you to include the name of the city so the user sees the following in their browser:</p>
+<p>&nbsp;</p>
+<p><img src="images/problem2.png" alt="ottawa weather"><span class="code"></span></p>
+<p class="segment-header">&nbsp;</p>
+<hr>
+<p class="segment-header">&nbsp;</p>
+<p class="segment-header">&nbsp;</p>
+<p class="segment-header">Part II: Express.js-based Thick Client:</p>
+<p class="segment-header">&nbsp;</p>
+<p><span class="red">The demo code will not work until you insert your own API_KEY in server code.</span><span class="red">You can sign up for an openweather.org API key at: <a href="https://openweathermap.org/appid">https://openweathermap.org/appid</a></span></p>
+<p>&nbsp;</p>
+<p>Part II is based on the demo code in <span class="code">demo_code_expressjs_thick_client</span> folder. In this case it is an <span class="black-bold">express.js</span> based version of the weather server. Again you will have to add your openweather.org API key to get the code to work.</p>
+<p>You should familiarize yourself with the online express.js documentation at <a href="https://expressjs.com">https://expressjs.com</a> Especially the &quot;Getting Started&quot; section including the &quot;Basic Routing&quot; subsection. </p>
+<p class="segment-header">&nbsp;</p>
+<p class="segment-header">Problem 3)</p>
+<p>To run the express-based demo you first need to install the <span class="code">express.js</span> npm modules and other helper modules we are using, like <span class="code">request</span>. The required modules are specified in the <span class="black-bold">dependencies</span> section of the <span class="code">package.json</span> file. To install those modules run the command</p>
+<p class="code">npm install</p>
+<p>from the directory where your code is located. This will install the  npm modules and create a <span class="code">node_modules</span> directory containing the installed modules. It will also create a <span class="code">package-lock.json</span> file which you can ignore for the purposes of this tutrorial. (FYI: the <span class="code">package-lock.json</span> file provides a snapshot of exactly what was installed in the <span class="code">node_modules</span> directory folder in case you later want to install those exact modules, or have another development team member install the exact same modules you are using.)</p>
+<p>Study the express-based demo code. It is essentially the same code as presented in the &quot;Introducing Express&quot; section of the course notes. Run the code by exectuing <span class="code">node server.js</span> and verify that it works with your weather API key:</p>
+<p>&nbsp;</p>
+<p><img src="images/problem3-1.png" width="835" height="397" alt=""/></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Alternatively  you can view the raw JSON weather data for a city specified as a query parameter in the browser address bar:</p>
+<p><img src="images/problem3-2.png" width="940" height="271" alt=""/></p>
+<p>Or if you have the JSON Formatter extension in Chrome installed you can see the data parsed:</p>
+<p><img src="images/problem3-3.png" width="917" height="614" alt=""/></p>
+<p class="segment-header">&nbsp;</p>
+<p class="segment-header">&nbsp;</p>
+<p class="segment-header">Problem 4)</p>
+<p>With Problem 3 as a warm up, we want you to take the express-based demo code and modify it, as necessary, to fetch recipe information from the <span class="black-bold">www.food2fork.com</span> recipe API service instead of weather information. (You will need to do this for assignment 4). For this you will need to sign up with that service and obtain an app ID from them. </p>
+<p>Here is a screen capture of me viewing my API key after signing up for the free service:</p>
+<p><img src="images/myAPIKey.png" alt="food2fork API key"></p>
+<p>&nbsp;</p>
+<p>This time instead of a <span class="code">getWeather()</span> function in <span class="code">public/script.js</span> you will need a <span class="code">getRecipes()</span> function instead. Make the necessary modifications.</p>
+<p>&nbsp;</p>
+<p>Also in the server you will need to replace the </p>
+<pre>
+app.get('/weather', (request, response) => {
+  let city = request.query.city
+  if(!city) {
+    return response.json({message: 'Please enter a city name'})
+  }
+  const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}`
+  http_request.get(url, (err, res, data) => {
+    return response.contentType('application/json').json(JSON.parse(data))
+  })
+})
+</pre>
+<p>With one that looks more like the following <span class="red">(notice food2fork now uses https and not http in its URL -a recent change):</span></p>
+<pre>
+app.get('/recipes', (request, response) => {
+  let ingredient = request.query.ingredient
+  let url = ''
+  if(!ingredient) {
+    return response.json({message: 'Please enter an ingredient name'})
+    url = `https://food2fork.com/api/search?key=${API_KEY}`
+  }
+  else {
+    url = `https://food2fork.com/api/search?key=${API_KEY}&q=${ingredient}`
+  }
+  http_request.get(url, (err, res, data) => {
+    return response.contentType('application/json').json(JSON.parse(data))
+  })
+})
+
+</pre>
+<p>Make all the changes needed to implement a <span class="code">fork2fork.js </span>server instead of a <span class="code">weather_server.js</span>. Make the appropriate changes all over the code so that the user interface labels and the variable names and function names in the code are appropiate. That is, don't have anything referring to weather in  code that is supposed to be about recipes.</p>
+<p>When completed launch the server:</p>
+<p><img src="images/problem4-1.png" width="528" height="131" alt=""/></p>
+<p>&nbsp;</p>
+<p>The user should be able to ask for recipes that include a particular ingredient (food2fork also allows multiple ingredients separated by commas) using the text field on the browser app and see the JSON data returned. (Note there is a delay when accessing food2fork -it will take a second before the data shows up.)</p>
+<p><img src="images/problem4-2.png"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Alternatively you should be able to request a recipe based on the query parameter in the browser address bar and see the JSON data returned.</p>
+<p>&nbsp;</p>
+<p><img src="images/problem4-3.png" width="937" height="533" alt=""/></p>
+<p>&nbsp;</p>
+<p>Alternatively if you have the JSON Formatter extension in Chrome active you can view the JSON data parsed:</p>
+<p>&nbsp;</p>
+<p><img src="images/problem4-4.png" width="922" height="616" alt=""/></p>
+<p class="red">&nbsp;</p>
+<p class="red">&nbsp;</p>
+<p class="red">When you have completed the above questions demonstrate your work to the TA's to get credit for the tutorial.</p>
+<pre>&nbsp;</pre>
+<p class="segment-header">&nbsp;</p>
+<h2>&nbsp;</h2
+>
+
+</body>
+</html>

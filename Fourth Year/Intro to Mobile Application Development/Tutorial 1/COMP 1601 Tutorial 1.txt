@@ -1,0 +1,71 @@
+COMP 1601 Tutorial 1
+Author: AJ Ricketts
+101084146
+Thursday January 21st, 2021
+
+Question 1: Changing the output of Celcius to have 2 significant digits
+
+- In order to do this I changed line 26 from: 
+	
+	let Cs = String(format: "%.4g", C)
+
+				to
+
+	let Cs = String(format: "%.2f", C)
+
+- The "%.4g" whas changed to "%.2f" as the .2 in this formatting means two decimal places and the f denotes that it is a floating point number instead
+  of a g which is general formatting.
+
+
+Question 2: Add a line below the Celsius conversion that gives the temperature in Kelvin.
+
+- This was achieved by creating a new variable, K, and setting that to the formula for converting celcius to kelvin (Celcius + 273.15)
+- This used the celcius variable that was previously defined before.
+- I then turned that value into a string with the properformating and printed it on a new line under the celcius conversion
+
+
+Question 3: Make the temperatures bold only (the rest of the text should be as it was). It is okay if there is extra spacing between the words and numbers.
+
+- For this I had to use the .bold() function and concatonate the Text views with the numbers using the .bold() funciton seperate from the normal part
+  of th string that is not.
+
+
+ Question 4: Add a miles to kilometers converter to the same screen. It should be below the existing Fahrenheit converter. The input for miles and Fahrenheit should be separate.
+
+
+ - Although I originally thought about creating a seperate view, I just continued in the same view and used the same steps to create the farinheight to celcius converter.
+ - First created a variable to take the input of miles as a string, then created a textfield where the user can input their desired miles, then converted that string to a Double
+ - Next I applied the miles to kilometers conversion formula, converted that value to a string and formatted it, and finally printed it out to the user with the numbers bolded
+
+ - There was some spacing that had to be done so various padding and spacers were used as well.
+
+
+Question 5: What are the keywords used in the ContenView struct? What are the explicit types? What are the implicit types? There are lots, so don't worry if you can't get them all. However, try to identify as many of them as you can.
+
+Explicit Types:
+- Text().font(.title)
+-let Cs = String(format: "%.2f", C)
+
+
+Implicit Types:
+- Spacer(), here swift is figuring out the required space needed to fit the most amount of space between elements
+- @State, Swift is recommputing the body when this value is changed
+- var Fs = ""
+
+
+Question 6: Out of the ones you identify, which keywords and types seem mysterious?
+
+- Because I didnt know what they did I actually looked up what was going on for each implicit type.
+- In class, it was explained that when doing something like var Fs = "" it is implying that "" is a string.
+
+
+
+Sources:
+
+- Used for part 1 & 2 to learn formatting:
+	https://www.hackingwithswift.com/quick-start/swiftui/formatting-interpolated-strings-in-swiftui
+	https://www.simpleswiftguide.com/swiftui-text-view-complete-tutorial/
+
+- Used for part 4: 
+	https://www.swiftbysundell.com/articles/swiftui-layout-system-guide-part-1/
+	https://developer.apple.com/documentation/swiftui/text

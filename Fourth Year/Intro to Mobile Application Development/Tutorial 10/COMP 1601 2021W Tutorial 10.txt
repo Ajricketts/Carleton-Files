@@ -1,0 +1,57 @@
+COMP 1601 2021W Tutorial 10
+Name: 
+Student ID:
+
+Collaborators:
+
+1: Converter-SB's execution is much more similar to Converter2A from tutorial 6 than Tutorial 2. This is because Converter-SB is using storyboards which has a similar execution to android applications in the sense that there are separate controllers and views that need to interact in order for the app to work. Converter2 from Tutorial 2 uses swiftUI where everything is all in one place.
+
+2: Connections are made between Main.storyboard and ViewController.swift by using the IBOutlet identifiers and IBActions. This is telling the application what screen or widget to use and what actions to do on these widgets (onClick for example). This is similar to the connections between activity_main.xml and MainActivity.kt in Tutorial 6 as android uses setContentView and findViewbyID for the same purposes.
+
+3: The layout was specified using the gui in xcode and dragging the widgets and elements you want to the correct part of the screen. You were then able to put constraints on these relative to the view or other elements. This is very similar to how it was done in Converter2A as it was done the exact same way aside from the fact that android studio gives you access to the xml files to alter the screen programatically. In Converter2 this was all done programitically.
+
+4: Converter-SB and Converter2A use a more MVC style control flow while swiftUI is more declarative.
+
+5: Looking into adding a menu myself, it seems as there is no very quick and easy way to do this. After doing a bit of research it seems as if this is a complicated process although I am not sure why it is much harder than swiftUI (lots of adding and reworking of the code)
+
+6: To do this I simply used attributes inspection tab of the sidebar in main.storyboard and changed the default text (second box from the top) for each widget.
+
+7: The process I took to complete this was as follows:
+
+	- Add a label from the library to the screen
+	- Stretch it to span the width of the screen
+	- In the attributes inspection tab of the sidebar set the alignment to center
+	- Control click dragged from label to the view (under view controller scene and view controller on the left) then selected bottom space to safe area
+	- Also used the same method above to select center horizontally in safe area (was not sure which alignment was required)
+
+8: The process I took to complete this was as follows:
+
+	- Created an IBOutlet called motivationMessage in ViewController.swift:
+		@IBOutlet weak var motivationMessage: UILabel!
+
+	- Created an array of strings of all the messages:
+		var motivation = ["You are choosing wisely!", "Keep going! Almost there!", "Welcome to Converter-SB!"]
+
+	- Created a function to update the label:
+		@IBAction func updateLabel() {
+        motivationMessage.text = motivation[motivationIndex % motivation.count]
+        motivationIndex += 1
+    	}
+
+    - Called this function when the conversion was switched (in updateConversion)
+    - set motivationMessage.text = nil when the user types (in doConversion()):
+    	
+    	@IBAction func doConversion() {
+        if let fromS = fromField.text {
+            motivationMessage.text = nil
+            if let from = Double(fromS) {
+                result.text =
+                    conv.formatConversion(from)
+            } else {
+                result.text = "Please enter a number."
+            }
+        }
+
+    - Control click dragged from the View to the label and set motivationMessage to an outlet
+    - In connections inspector tab on the TextField, dragged from Touch Down to the View and set it to the function updateLabel() so that the label would also switch when the user clicked on it.
+    

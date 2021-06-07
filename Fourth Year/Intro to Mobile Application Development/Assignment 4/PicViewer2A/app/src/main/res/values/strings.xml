@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PicViewer2A</string>
+    <string name="pic_viewer_demo">Pic Viewer Demo</string>
+    <string name="comp_1601_asssignment_4">COMP 1601 Asssignment 4</string>
+    <string name="click_to_continue_to_applicaiton">Click to continue to applicaiton</string>
+    <string name="image_name">Kittens</string>
+</resources>

@@ -1,0 +1,28 @@
+(define (foo y)
+  ((lambda(x)y)((lambda(y)(* y y)) y)))
+(foo 3)
+
+;(foo 3)
+;((lambda(x)3) ((lambda(y)(* y y)) 3))
+;((lambda(x)3) (* 3 3))
+;((lambda(x)3) 9)
+;3
+
+
+(define (multiplyBy x)
+  (lambda(y)(* x y)))
+(define double (multiplyBy 2))
+(define triple (multiplyBy 3))
+
+;(define double (multiplyBy 2))
+;(define double (lambda(y)(* 2 y)))  ;free variable is already substituted
+
+;(double 5)
+;(* 2 5)
+;10
+
+;(define triple (multiplyBy 3))
+;(define triple (lambda(y)(* 3 y))
+
+
+(((lambda(a)(lambda(b c)(if (> (- b c) a) "pizza" "french fries"))) 5) 10 1)

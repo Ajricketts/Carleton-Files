@@ -1,0 +1,158 @@
+COMP 3000 Tutorial 4
+Alyxander-Jacob Ricketts
+101084146
+Friday October 11th, 2019
+
+Question 1: Compile and run 3000test.c. It takes a filename as an argument and reports information on the file. Try giving it the following and see what it reports:
+
+    a regular text file that exists
+    a directory
+    a symbolic link
+    a device file
+
+
+	Giving it a regular text file that exists: 
+		
+		student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test
+		test.txt 
+
+		File test.txt: 
+		   inode 24733
+		   length 15
+		   a count 1
+
+	Giving it a directory:
+
+	
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test ../Tutorial_4
+	File ../Tutorial_4: 
+   	   inode 66128
+  	   length 4096
+
+	Giving it a symbolic link:
+
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test test-	
+	symbolic.txt
+
+	File test-symbolic.txt: 
+   	   inode 24733
+  	   length 15
+ 	   a count 1
+
+	Giving it a device file:
+
+	student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test /dev/tty6
+	
+	File /dev/tty6: 
+   	   inode 25
+  	   length 0
+
+
+Question 2: Change 3000test to use lstat rather than stat. How does its behavior change?
+
+
+	Before the change to lstat:
+
+		student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test 
+		test.txt 
+
+		File test.txt: 
+   		   inode 24733
+  		   length 15
+ 		   a count 1
+
+
+		student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test test-
+		symbolic.txt
+
+		File test-symbolic.txt: 
+   		   inode 24733
+     		   length 15
+ 		   a count 1
+
+	After the change to lstat:
+
+		student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test 
+		test.txt
+
+		   File test.txt: 
+   		   inode 24733
+  	  	   length 15
+ 		   a count 1
+
+		student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test test-
+		symbolic.txt
+		
+		   File test-symbolic.txt: 
+   		   inode 20653
+  		   length 8
+
+	
+	The only difference between stat and lstat is that if the pathname is a symbolic 
+	link, then it returns information about the link itself, not the file that it 
+	refers to. (from the lstat man pages)
+
+
+Question 3: Modify 3000test so when it is given a symbolic link it reports the name of the target. Use readlink(2).
+
+
+
+
+Question 4: Are there files or directories that you cannot run 3000test on? Can you configure file/directory permissions so as to make something inaccessible to 3000test?
+
+	If you remove read permisions from the file you are testing on, then 3000test wont 		be able to open the file to read how many lines are in it. After removing read 		permisions you get something like this:
+
+
+		student@COMPXXXX:~/Desktop/Comp 3000/Tutorials/Tutorial_4$ ./3000test 			test.txt
+
+		   File test.txt: 
+   		   inode 24733
+  		   length 15
+     	   	   Error: Permission denied
+
+
+
+Question 5: How does the memory use of 3000test change as it runs? You may want to add calls to sleep(3) so you can observe its memory usage. You can create a 1 GB file of random data with the command dd if=/dev/urandom of=test bs=1024 count=1000000.
+
+
+	The memory usage of 3000test increases while it is reading the file and retrieving 		the data, this section of code:
+
+		  if (S_ISREG(statbuf.st_mode)) {
+                fd = open(fn, O_RDONLY);
+                if (fd == -1) {
+                        report_error(strerror(errno));
+                }
+                data = (char *) mmap(NULL, len,
+                                     PROT_READ, MAP_SHARED, fd, 0);
+
+                sleep(3);
+
+                if (data == MAP_FAILED) {
+                        report_error(strerror(errno));
+                }
+
+                sleep(3);
+
+                count = 0;
+                for (i=0; i<len; i++) {
+                        if (data[i] == 'a') {...........
+
+
+	and then drops back down to normal when it is printing the outputs and finishing 
+	its task.
+
+
+Question 6:
+
+
+
+
+
+
+
+
+
+
+
+	
+

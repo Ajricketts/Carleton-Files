@@ -1,0 +1,135 @@
+COMP 1601 2021W Assignment 2
+Name: AJ Ricketts
+Student ID: 101084146
+Date: Wednesday February 24th, 2021
+
+Collaborators:
+
+1a: The rotation information is stored as a string in picviewer-2 which differs from Tutorial 4's picviewer-1 which stored it as an angle object.
+
+1b: While trying to implement this feature, the main issue I ran into was the fact that Textfield expects a Binding<String> and not a String. This means that you cannot simply cast the Angle object into a string and use the code (the textfield) as it is now. This would take a considerable work around as I could not figure out how to ge the Textfield to work with the Angle object. Along with getting this working, you would also need to change various other things around such as the State and Binding variables from strings to Angles (change andgleS = "0" to angleS = Angle(degrees = 0.0)). In addition, changing the rotating function to use the Angle object instead of the string as well (self.angle = angle). Lastly, the resetState and tapReset functions would need to be changed to take an angle instead of a string.
+
+2a: The current angle function converts the string angle into a Double. The function then returns an Angle Object using this double (creats an angle of the double, i.e if the string and therefore the Double wast 34 then the angle it returns would be 34°). If the string cannot be converted into a double and returns nil, then the function sets the angle to 0.
+
+2b: This is called repeatedly when the user is rotating the image (specifically called on line 64)
+
+2c: The call to currentAngle() was replaced with Angle(degrees: Double(self.angleS) ?? 0). Line 64 now looks like:
+	- .rotationEffect(Angle(degrees: Double(self.angleS) ?? 0))
+
+					instead of
+	- .rotationEffect(currentAngle())
+
+3: To change the rotations so that they are locked to 45 degree increments, I simply took the value of the angle, divided it by 45, rounded it to the nearest whole number (using the round() function) and then multiplying it by 45. This was done in the rotation modifier as to allow user inputted angle functionality to still work. I created a temp variable to do these calculations and then set the angle property to this variable. The Rotation gesture now looks like:
+
+		-   var rotating: some Gesture {
+        		RotationGesture()
+            	.onChanged { angle in
+                let temp = (round(angle.degrees / 45)) * 45
+                self.angleS = String(format: "%.0f", temp)
+        		}
+    		}
+
+
+4: To change the menu so that it is automatically generated from a (compile-time defined) data structure, I used a forEach loop. This is because the menu is created inside of a View and you cannot use for loops in views. I put all of the Menu button names into an array called picKeys, and the corresponding asset names in a seperate array called picValues. I then looped over both arrays by creating an array of pairs using the zip function (pairs were matched up by index as per the function defention). Lastly, I set the menu name and the current image to its matching menu name. The menu code now looks like this: 
+
+		-   Menu("Animals!") {
+                ForEach(Array(zip(picKeys,picValues)), id: \.0) {
+                    item in
+                    Button(item.0, action: {
+                        theImage = item.1
+                        resetState()
+                    })
+                }
+            }
+
+With the two arrays being State variables at the top of the program:
+
+		-   @State private var picKeys = ["Kittens", "Sad Dog", "Fish","Cheetah"]
+    	-	@State private var picValues = ["kittens", "sadDog", "fish","cheetah"]
+
+
+5: To accomplish adding a double tap gesture that switches to the next available picture in the menu, I needed to switch the way I did the previous question (I originally got it working using a dictionary but it was a less elagant solution to find the next element as dictionaries are unordered). To do this I created a new onTagGesture that recognized 2 taps above the current one that recognized one tap (as if you put it under the double tap won't be recognized). Within the onTapGesture I simply found the index of the current image we were on in the arrray, then used a conditional to check if that image was the last image, if it was, we would go back to the first image in the array. If not, we would go to the next image in the array (by incrementing the index by 1). The on tap gesture looks like:
+
+		-	.onTapGesture(count: 2, perform: {
+                    let indexOfValues = picValues.firstIndex(of: theImage)!
+                    if picValues[indexOfValues] == picValues.last {
+                        theImage = picValues.first!
+                    }
+                    else {
+                        theImage = picValues[indexOfValues + 1]
+                    }
+                })
+
+- This is in the ActiveImage view (more specifically in the GemoetryReader) and the arrays were binded from ContentView and passed in as a paramater when ActiveImage is called:
+		
+		- Call to ActiveImage in ContentView:
+
+			-	ActiveImage(theImage: $theImage, moved: $moved, finalAmount: $magnification,
+                        angleS: $angleS, picKeys: $picKeys, picValues: $picValues)
+
+
+        - Bindings to the arrays in the ActiveImage View:
+
+        	-	@Binding var picKeys: Array<String>
+    		 	@Binding var picValues: Array<String>
+
+
+6: For this question, first we will look at the coordinates and how I implimented that, and then will move onto the magnification. For the X and Y coordinates the same thing was done with a few changes to variable names. Firstly, I moved the HStack that was previously in ContentView into Activeimage (under the GeometryReader) in order to have easy access to the position values. The X and Y labels were printed to the screen in the HStack (in order to provide good spacing with the angle and magnification displays) Then TextFields with position.x and position.y as the values for the X and Y coordinates respectively. In order to leave the position as a CGPoint and not convert things over to strings, I had to use the 'value' binding instead of the normal 'string' binding. This also meant that I needed formatters to deal with these non-string values I would be passing in to the TextFeild. I created seperate functions (called positionFormatter and magnificationFormatter) in ActiveImage that created numberFormatters and applied the correct formatting on them. Doing all of this allowed me to have a real time display of the X and Y values as well as allowing the user to manually type in values, without having to use strings. Lastly, I initialized position.x and position.y to be 0 when the image was reset. This ensured that the Textfield did not keep the old values. Although because of the way I did things, I could not reset these values when the image got switched to a new one.
+
+	- The additions to HStack to print the X and Y coordinates, with the respective TextFields:
+
+				Text("X:")
+			    TextField("", value: $position.x, formatter: positionFormater())
+	            Text("Y:")
+	            TextField("", value: $position.y, formatter: positionFormater())
+
+	- The additional position formatter function:
+			
+			func positionFormater() -> NumberFormatter {
+	        	let numberformat = NumberFormatter()
+	        	numberformat.usesSignificantDigits = false
+	        	return numberformat
+	    	}
+
+	- The addition to tapRest() to reset the X and Y Textfields:
+
+			self.position.x = 0
+	        self.position.y = 0
+
+
+- Next, looking at the magnification, very different steps were taken. After trying many different approaches I realized the problem was with how the magnification was done and calculated (adding two numbers – finalAmount and currentAmount – instead of just using one). Because of this I decided to change how the magnification gesture was done to make my life easier. I got rid of the .onEnded action in the magnification gesture and just used onChanged. This allowed me to only update one variable (finalAmount) and then take the same approach that I did for the X and Y coordinates (using a value binding in Textfield and creating a formatter for it). Although, I am still using currentAmount as without it I got a weird magnification effefct (.scaleEffect(finalAmount + currentAmount) is still the same, currentAmount is just constantly 0 now). After all this I got the desired effect.
+
+	- The additions to HStack to print the magnification label and factor:
+
+			Text("M:")
+            TextField("", value: $finalAmount, formatter: magnificationFormater())
+
+    - The additional magnification formatter function:
+
+    		func magnificationFormater() -> NumberFormatter {
+        		let numberformat = NumberFormatter()
+        		numberformat.usesSignificantDigits = true
+        		numberformat.maximumSignificantDigits = 3
+        		return numberformat
+    		}
+
+    - The changes to the magnification gesture, the gesture now looks like:
+
+    		var magnifying: some Gesture {
+       			MagnificationGesture().onChanged { amount in
+            	self.finalAmount = amount
+       	 		}
+    		}
+
+- Because of the way it was implimented, the user must put in a number, if they put in anything that is not a number the program wont recognize it and will revert to displaying the current valid magnification factor, or X / Y coordinate.
+
+Sources:
+https://stackoverflow.com/questions/30280003/convert-or-cast-object-to-string
+https://developer.apple.com/documentation/swiftui/textfield
+https://stackoverflow.com/questions/61646137/no-exact-matches-in-call-to-initializer-error-message-in-swift
+https://stackoverflow.com/questions/37959523/swift-rotate-gesture-and-rotation-increments-of-90-degrees
+https://stackoverflow.com/questions/56675532/swiftui-iterating-through-dictionary-with-foreach
+https://stackoverflow.com/questions/60043204/iterating-over-multiple-arrays-with-foreach-swiftui
+https://stackoverflow.com/questions/24028860/how-to-find-index-of-list-item-in-swift
+https://developer.apple.com/documentation/foundation/numberformatter
+https://stackoverflow.com/questions/26350977/how-to-round-a-double-to-the-nearest-int-in-swift
